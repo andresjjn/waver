@@ -1,0 +1,35 @@
+# --- excluded components (not part of the published stack) ---
+# third-party clones kept locally as reference (see README credits)
+Docker_ROS2_Humble_Template/
+I2C_control_base/
+ROS2_Docker_rpi_camera/
+# own standalone repos, linked from README instead of vendored
+ROS2_Docker_UI/
+wave_rover_joystick_controller/
+waver_motor_driver/
+# superseded by waver_description inside the base workspace
+ROS_WAVE_URDF/
+# vendor firmware & archives (see docs/WAVESHARE_WIKI_REFERENCE.md)
+Arduino/9DOF_Demo/
+Arduino/9DOF_Demo_v2.zip
+Arduino/WAVE_ROVER_V0.9/
+Arduino/WAVE_ROVER.zip
+
+# --- build artifacts ---
+build/
+install/
+log/
+__pycache__/
+*.py[cod]
+
+# --- local state ---
+tools/.venv/
+maps/*
+!maps/.gitkeep
+
+# --- OS / editor noise ---
+.DS_Store
+*.bak
+*.zip
+.claude/
+ROS 2 Commands Cheat Sheet.pdf

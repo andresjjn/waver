@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<title>Waver — Vigilante Nocturno</title>
+<style>
+  :root {
+    --bg: #0d1117; --panel: #161b22; --border: #30363d;
+    --text: #c9d1d9; --dim: #8b949e; --accent: #58a6ff;
+    --ok: #3fb950; --warn: #d29922; --err: #f85149;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { background: var(--bg); color: var(--text); font-family: system-ui, sans-serif; padding: 8px; }
+  header { display: flex; align-items: center; gap: 10px; padding: 4px 4px 10px; flex-wrap: wrap; }
+  header h1 { font-size: 1.1rem; font-weight: 600; }
+  .badge { padding: 2px 10px; border-radius: 12px; font-size: .8rem; border: 1px solid var(--border); }
+  .badge.ok { color: var(--ok); border-color: var(--ok); }
+  .badge.err { color: var(--err); border-color: var(--err); }
+  #mode-badge { font-weight: 700; }
+  #mode-badge.AUTO { color: var(--accent); border-color: var(--accent); }
+  #mode-badge.E_STOP { color: var(--err); border-color: var(--err); background: #f8514922; }
+
+  .grid { display: grid; gap: 8px; grid-template-columns: 2fr 1fr; }
+  @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
+
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 10px; }
+  .panel h2 { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--dim); margin-bottom: 8px; }
+
+  #video-wrap { position: relative; }
+  #video { width: 100%; border-radius: 6px; background: #000; min-height: 240px; display: block; }
+  #joystick { position: absolute; bottom: 12px; left: 12px; width: 130px; height: 130px; touch-action: none; }
+  #video-buttons { position: absolute; top: 10px; right: 10px; display: flex; gap: 6px; }
+  #video-buttons button, select.vsrc { background: #0d1117cc; color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 6px 10px; font-size: .8rem; }
+
+  .row { display: flex; justify-content: space-between; padding: 3px 0; font-size: .9rem; }
+  .row .v { font-variant-numeric: tabular-nums; color: var(--accent); }
+
+  .bar { height: 10px; background: #21262d; border-radius: 5px; overflow: hidden; margin-top: 4px; }
+  .bar > div { height: 100%; background: var(--ok); width: 0%; transition: width .5s, background .5s; }
+
+  canvas.instrument { width: 100%; max-width: 170px; display: block; margin: 0 auto; }
+  .instruments { display: flex; gap: 8px; justify-content: space-around; }
+
+  .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
+  button.big { padding: 14px 8px; border-radius: 8px; border: 1px solid var(--border); background: #21262d; color: var(--text); font-size: .95rem; font-weight: 600; cursor: pointer; }
+  button.big:active { transform: scale(.97); }
+  #btn-auto.on { background: var(--accent); color: #0d1117; border-color: var(--accent); }
+  #btn-estop { color: var(--err); border-color: var(--err); }
+  #btn-estop.on { background: var(--err); color: #fff; }
+
+  .slider-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; }
+  .slider-row label { width: 90px; font-size: .85rem; color: var(--dim); }
+  .slider-row input { flex: 1; accent-color: var(--accent); }
+
+  #log { font-family: ui-monospace, monospace; font-size: .75rem; color: var(--dim); max-height: 130px; overflow-y: auto; }
+  #log .evt { color: var(--warn); }
+</style>
+</head>
+<body>
+<header>
+  <h1>🤖 Waver — Vigilante Nocturno</h1>
+  <span id="conn-badge" class="badge err">desconectado</span>
+  <span id="mode-badge" class="badge">—</span>
+  <span id="gamepad-badge" class="badge">sin mando</span>
+</header>
+
+<div class="grid">
+  <div>
+    <div class="panel" id="video-wrap">
+      <img id="video" alt="cámara">
+      <canvas id="det-overlay" style="position:absolute; pointer-events:none;"></canvas>
+      <div id="video-buttons">
+        <select class="vsrc" id="video-src">
+          <option value="/oak/rgb/image_raw">RGB</option>
+          <option value="/oak/stereo/image_raw">Profundidad</option>
+        </select>
+        <button id="btn-snap">📸</button>
+      </div>
+      <canvas id="joystick" width="260" height="260"></canvas>
+    </div>
+
+    <div class="panel" style="margin-top:8px">
+      <h2>Control</h2>
+      <div class="btns">
+        <button class="big" id="btn-auto">MODO AUTÓNOMO</button>
+        <button class="big" id="btn-estop">⛔ E-STOP</button>
+      </div>
+      <div class="slider-row"><label>💡 Foco LED</label><input type="range" id="light-io4" min="0" max="255" value="0"></div>
+      <div class="slider-row"><label>🔦 Foco IR</label><input type="range" id="light-io5" min="0" max="255" value="0"></div>
+    </div>
+  </div>
+
+  <div>
+    <div class="panel">
+      <h2>Actitud y rumbo</h2>
+      <div class="instruments">
+        <canvas class="instrument" id="horizon" width="170" height="170"></canvas>
+        <canvas class="instrument" id="compass" width="170" height="170"></canvas>
+      </div>
+      <div class="row"><span>Roll / Pitch</span><span class="v" id="rp">— / —</span></div>
+      <div class="row"><span>Rumbo (mag)</span><span class="v" id="yaw">—</span></div>
+    </div>
+
+    <div class="panel" style="margin-top:8px">
+      <h2>Lidar</h2>
+      <canvas class="instrument" id="radar" width="220" height="220" style="max-width:220px"></canvas>
+      <div class="row"><span>Alcance vista</span><span class="v" id="radar-range">4 m</span></div>
+      <div class="row"><span>Obstáculo más cercano</span><span class="v" id="radar-min">—</span></div>
+    </div>
+
+    <div class="panel" style="margin-top:8px">
+      <h2>Batería</h2>
+      <div class="row"><span>Voltaje</span><span class="v" id="bat-v">—</span></div>
+      <div class="row"><span>Corriente</span><span class="v" id="bat-a">—</span></div>
+      <div class="row"><span>Estado</span><span class="v" id="bat-s">—</span></div>
+      <div class="bar"><div id="bat-bar"></div></div>
+    </div>
+
+    <div class="panel" style="margin-top:8px">
+      <h2>Sistema</h2>
+      <div class="row"><span>Temperatura IMU</span><span class="v" id="temp">—</span></div>
+      <div class="row"><span>Detecciones</span><span class="v" id="det">0</span></div>
+    </div>
+
+    <div class="panel" style="margin-top:8px">
+      <h2>Eventos</h2>
+      <div id="log"></div>
+    </div>
+  </div>
+</div>
+
+<script src="roslib.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

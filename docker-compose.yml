@@ -1,0 +1,118 @@
+# Wave Rover — stack completo en la Raspberry Pi 5
+#
+#   docker compose up -d           # todo el robot
+#   docker compose up -d base web  # solo base + dashboard
+#   docker compose logs -f base
+#
+# Todos los servicios usan network_mode: host (descubrimiento DDS) e
+# ipc: host (FastDDS usa memoria compartida entre procesos del mismo host;
+# sin /dev/shm compartido los contenedores se descubren pero no llegan datos).
+# El dashboard queda en http://<IP-de-la-Pi>:8000
+
+services:
+
+  # Motores (I2C) + cmd_vel + twist_mux + IMU + bateria + focos + modos + URDF
+  base:
+    build: ./wave_robot_tele_server_ros2
+    container_name: waver_base
+    network_mode: host
+    ipc: host
+    devices:
+      - /dev/i2c-1:/dev/i2c-1
+    volumes:
+      - ./wave_robot_tele_server_ros2/ros2_ws:/ros2_ws
+    command: >
+      bash -c "source /opt/ros/humble/setup.bash &&
+               cd /ros2_ws && colcon build --symlink-install &&
+               source /ros2_ws/install/setup.bash &&
+               ros2 launch waver_base base.launch.py"
+    restart: unless-stopped
+
+  # Lidar STL-06 -> /scan
+  lidar:
+    build: ./ROS2_Docker_lidar_stl06
+    container_name: waver_lidar
+    network_mode: host
+    ipc: host
+    devices:
+      - /dev/ttyUSB0:/dev/ttyUSB0
+    volumes:
+      - ./ROS2_Docker_lidar_stl06/ros2_ws:/ros2_ws
+    command: >
+      bash -c "source /opt/ros/humble/setup.bash &&
+               cd /ros2_ws && colcon build &&
+               source /ros2_ws/install/setup.bash &&
+               ros2 launch ldlidar_stl_ros2 waver_ld06.launch.py"
+    restart: unless-stopped
+
+  # OAK-D Lite -> /oak/rgb, /oak/stereo, /oak/points, /oak/nn (YOLO en camara)
+  oak:
+    build: ./ROS2_Docker_oak_camera
+    container_name: waver_oak
+    network_mode: host
+    ipc: host
+    volumes:
+      - /dev/bus/usb:/dev/bus/usb
+      - ./ROS2_Docker_oak_camera/config/oak.yaml:/oak.yaml
+    device_cgroup_rules:
+      - 'c 189:* rmw'
+    # OJO: todo el ros2 launch en UNA linea — con "command: >" las lineas mas
+    # indentadas conservan el salto de linea y bash corta el comando ahi.
+    command: >
+      bash -c "source /opt/ros/humble/setup.bash &&
+               ros2 launch depthai_ros_driver camera.launch.py params_file:=/oak.yaml pointcloud.enable:=true parent_frame:=oak_link"
+    restart: unless-stopped
+
+  # SLAM 2D (Fase 3): rf2o + EKF + slam_toolbox -> /map
+  # No arranca por defecto: docker compose --profile slam up -d slam
+  slam:
+    build: ./ROS2_Docker_slam
+    container_name: waver_slam
+    network_mode: host
+    ipc: host
+    profiles: ["slam"]
+    volumes:
+      - ./ROS2_Docker_slam/ros2_ws:/ros2_ws
+      - ./maps:/maps
+    command: >
+      bash -c "source /opt/ros/humble/setup.bash &&
+               cd /ros2_ws && colcon build --symlink-install &&
+               source /ros2_ws/install/setup.bash &&
+               ros2 launch waver_slam slam.launch.py"
+    restart: unless-stopped
+
+  # Nav2 (Fase 4): navegacion autonoma -> publica en nav_vel (prioridad 10)
+  # Requiere slam corriendo. Arranque: docker compose --profile nav up -d nav
+  nav:
+    build: ./ROS2_Docker_nav2
+    container_name: waver_nav
+    network_mode: host
+    ipc: host
+    profiles: ["nav"]
+    volumes:
+      - ./ROS2_Docker_nav2/config/nav2_params.yaml:/nav2_params.yaml
+      - ./ROS2_Docker_nav2/launch:/launch
+    command: >
+      bash -c "source /opt/ros/humble/setup.bash &&
+               ros2 launch /launch/nav2.launch.py"
+    restart: unless-stopped
+
+  # Dashboard Vigilante Nocturno (rosbridge 9090, video 8080, web 8000,
+  # foxglove 8765 -> abrir https://app.foxglove.dev y conectar ws://IP:8765)
+  web:
+    build: ./ROS2_Docker_web
+    container_name: waver_web
+    network_mode: host
+    ipc: host
+    volumes:
+      - ./ROS2_Docker_web/www:/www_live
+    command: >
+      bash -c "source /opt/ros/humble/setup.bash &&
+               ros2 launch rosbridge_server rosbridge_websocket_launch.xml &
+               source /opt/ros/humble/setup.bash &&
+               ros2 run web_video_server web_video_server &
+               source /opt/ros/humble/setup.bash &&
+               ros2 launch foxglove_bridge foxglove_bridge_launch.xml &
+               cp /www_live/index.html /www_live/app.js /www/ 2>/dev/null;
+               cd /www && python3 -m http.server 8000"
+    restart: unless-stopped

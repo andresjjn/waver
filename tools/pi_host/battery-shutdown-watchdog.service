@@ -1,0 +1,29 @@
+# Watchdog de apagado limpio por bateria critica (Wave Rover).
+#
+# El battery_manager (contenedor waver_base) escribe el flag cuando el pack
+# baja de shutdown_voltage sostenido (60 s); este servicio del HOST lo ve y,
+# tras una VENTANA DE RECUPERACION de 30 s (el manager borra el flag si el
+# voltaje vuelve — p. ej. bajones transitorios por rafagas de CPU/motores),
+# apaga la Pi con 1 minuto de gracia para no corromper la SD.
+#
+# Leccion 2026-07-04: un colcon build hundio el pack ~1 V durante 20 s y la
+# version sin ventana apago la Pi con la bateria ya recuperada.
+#
+# Instalacion (una vez, en la Pi):
+#   sudo cp ~/Waver/tools/pi_host/battery-shutdown-watchdog.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now battery-shutdown-watchdog
+#
+# Cancelar un apagado en curso: sudo shutdown -c
+# Nota: $$ escapa la expansion de variables de systemd (sin eso ${V} llega vacia).
+
+[Unit]
+Description=Apagado limpio de la Pi cuando el Wave Rover reporta bateria critica
+
+[Service]
+ExecStart=/bin/bash -c 'FLAG=/home/ros/Waver/wave_robot_tele_server_ros2/ros2_ws/.battery_shutdown_request; while true; do if [ -f "$$FLAG" ]; then sleep 30; if [ -f "$$FLAG" ]; then V=$$(cat "$$FLAG" 2>/dev/null); rm -f "$$FLAG"; /usr/sbin/shutdown -h +1 "Bateria critica ($${V} V): apagado limpio en 1 min (shutdown -c para cancelar)"; else logger -t battery-watchdog "Flag retirado durante la ventana de 30 s: bateria recuperada, no se apaga"; fi; fi; sleep 10; done'
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

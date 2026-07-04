@@ -1,0 +1,38 @@
+# Parametros del depthai_ros_driver (2.12.2) para OAK-D Lite en el Wave Rover.
+# Pipeline RGBD + YOLO ESPACIAL corriendo DENTRO de la camara (Myriad X):
+# la Pi recibe imagenes + detecciones con posicion 3D sin gastar CPU.
+#
+# Config validada en hardware 2026-07-03 (0 crashes, /oak/points ~9.6 Hz,
+# /oak/nn/spatial_detections ~9.8 Hz por USB 2.0). DOS TRAMPAS conocidas que
+# crashean el component_container en bucle (cv::Mat rowRange assertion,
+# OpenCV 4.5.4) cuando la nube de puntos esta activa:
+#   1. stereo.i_subpixel: true
+#   2. stereo.i_width/i_height custom (p. ej. 640x400) con i_align_depth: true
+#      -> el depth alineado ya sale al tamano del RGB; forzar otro tamano
+#         rompe el nodo point_cloud_xyzrgb.
+# NO reintroducir sin probar con `docker logs waver_oak | grep what\(\)`.
+#
+# RGB a 720P mientras negocie USB 2.0 (deuda tecnica: cable USB-A 3.0 -> C
+# de una pieza al puerto azul; el log debe decir "USB SPEED: SUPER" y
+# entonces se puede subir a 1080P).
+/oak:
+  ros__parameters:
+    camera:
+      i_pipeline_type: RGBD
+      i_nn_type: spatial          # detecciones con XYZ (para "ve hasta la silla")
+      i_enable_imu: false         # la OAK-D Lite no trae IMU
+    rgb:
+      i_resolution: '720P'
+      i_fps: 15.0                 # contenido para WiFi + USB2 + CPU de la Pi 5
+      # camara montada al reves (2026-07-04): rotar on-device los 3 sensores
+      # a la vez para que RGB, depth y XYZ de las detecciones sigan alineados
+      i_sensor_img_orientation: ROTATE_180_DEG
+    left:
+      i_sensor_img_orientation: ROTATE_180_DEG
+    right:
+      i_sensor_img_orientation: ROTATE_180_DEG
+    stereo:
+      i_align_depth: true         # depth en el frame del RGB (sale a 1280x720)
+      i_subpixel: false           # NO activar (crash, ver cabecera)
+    nn:
+      i_nn_config_path: depthai_ros_driver/yolo   # yolov4_tiny COCO 80 clases

@@ -1,0 +1,24 @@
+twist_mux:
+  ros__parameters:
+    topics:
+      joystick:
+        topic: joy_vel     # teleop fisica (ROG/mando) — maxima prioridad de mando
+        timeout: 0.5
+        priority: 100
+      web:
+        topic: web_vel     # joystick virtual del dashboard
+        timeout: 0.5
+        priority: 90
+      navigation:
+        topic: nav_vel     # Nav2 (fase 4)
+        timeout: 0.5
+        priority: 10
+    locks:
+      lock_nav:
+        topic: lock_nav    # True en TELEOP: silencia nav_vel pero no los joysticks
+        timeout: 2.0
+        priority: 50
+      e_stop:
+        topic: e_stop      # True: silencia todo
+        timeout: 2.0
+        priority: 255

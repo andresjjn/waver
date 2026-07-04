@@ -1,0 +1,45 @@
+# EKF de robot_localization: fusiona odometria laser (rf2o) + IMU (QMI8658).
+# Publica el TF odom -> base_link (rf2o NO lo publica, ver slam.launch.py).
+#
+# Sin encoders la unica odometria de traslacion es rf2o; la IMU aporta
+# velocidad angular (giro mucho mas fiable que el matching laser en giros
+# rapidos de skid-steer) y estabiliza el yaw.
+ekf_filter_node:
+  ros__parameters:
+    frequency: 20.0
+    sensor_timeout: 0.5
+    two_d_mode: true                  # robot plano: fuerza z/roll/pitch = 0
+    publish_tf: true
+    map_frame: map
+    odom_frame: odom
+    base_link_frame: base_footprint   # consistente con el URDF de waver_description
+    world_frame: odom
+
+    # rf2o: fusionar POSE x/y/yaw en diferencial (deltas de pose -> movimiento).
+    # NO fusionar su twist: rf2o lo publica poco fiable/casi cero y el EKF
+    # se quedaba quieto (bug cazado 2026-07-04: 1 m real -> 9 cm estimados).
+    odom0: odom_rf2o
+    odom0_config: [true,  true,  false,   # x y z
+                   false, false, true,    # roll pitch yaw
+                   false, false, false,   # vx vy vz (twist de rf2o: no fiable)
+                   false, false, false,   # vroll vpitch vyaw
+                   false, false, false]   # ax ay az
+    odom0_differential: true              # consume deltas, inmune a saltos de pose
+    odom0_queue_size: 5
+
+    # IMU: solo velocidad angular z (el gyro es fiable; la orientacion absoluta
+    # del complementario y el magnetometro entran mas adelante si hace falta)
+    imu0: imu/data_raw
+    imu0_config: [false, false, false,
+                  false, false, false,
+                  false, false, false,
+                  false, false, true,     # vyaw del giroscopio
+                  false, false, false]
+    imu0_differential: false
+    imu0_queue_size: 10
+
+    process_noise_covariance_diagonal: [0.05, 0.05, 0.001,
+                                        0.001, 0.001, 0.06,
+                                        0.025, 0.025, 0.001,
+                                        0.001, 0.001, 0.02,
+                                        0.01, 0.01, 0.015]

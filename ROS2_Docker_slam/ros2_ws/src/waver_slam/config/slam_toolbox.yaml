@@ -1,0 +1,39 @@
+# slam_toolbox (async) para el Wave Rover con lidar LD06 (12 Hz, 360 grados).
+slam_toolbox:
+  ros__parameters:
+    solver_plugin: solver_plugins::CeresSolver
+    ceres_linear_solver: SPARSE_NORMAL_CHOLESKY
+    ceres_preconditioner: SCHUR_JACOBI
+    ceres_trust_strategy: LEVENBERG_MARQUARDT
+    ceres_dogleg_type: TRADITIONAL_DOGLEG
+    ceres_loss_function: None
+
+    odom_frame: odom
+    map_frame: map
+    base_frame: base_footprint
+    scan_topic: /scan
+    mode: mapping
+
+    # LD06: 12 Hz, alcance util ~8 m en interiores
+    max_laser_range: 8.0
+    minimum_time_interval: 0.2
+    transform_publish_period: 0.05
+    map_update_interval: 2.0
+    resolution: 0.05
+
+    # El robot es pequeno y lento: umbrales de movimiento bajos para que
+    # registre scans aunque avance despacio
+    minimum_travel_distance: 0.10
+    minimum_travel_heading: 0.15
+
+    # Odometria rf2o+EKF decente pero sin encoders: dale margen al matcher
+    do_loop_closing: true
+    loop_search_maximum_distance: 4.0
+    correlation_search_space_dimension: 0.5
+    correlation_search_space_resolution: 0.01
+    correlation_search_space_smear_deviation: 0.1
+
+    transform_timeout: 0.3
+    tf_buffer_duration: 20.0
+    stack_size_to_use: 40000000
+    enable_interactive_mode: false
