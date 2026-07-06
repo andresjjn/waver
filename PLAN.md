@@ -46,7 +46,53 @@ falso). El INA219 no ve la corriente del cargador (shunt solo en la rama de
 consumo): "cargando" se infiere por tendencia de voltaje en el OLED.
 **El primer mapa quedó pendiente** (batería agotada, 3 intentos).
 
+**Sesión remota (2026-07-05) — fiabilidad de red y arranque:** el robot llevaba
+horas "desaparecido" estando vivo: WiFi **JEJEN_5G (5 GHz)** con -80 dBm +
+power save activo → ciclos de desconexión y carrusel de IPs por DHCP
+(.16→.15→.69). Arreglos aplicados en la Pi: (1) `systemctl enable
+docker.service` — antes era socket-activated y **tras un reinicio no arrancaba
+ningún contenedor** (ni el watchdog de batería) hasta el primer comando docker;
+(2) power save del WiFi desactivado (persistente vía
+`/etc/NetworkManager/conf.d/wifi-powersave-off.conf`); (3) robot movido a
+**JEJEN 2.4 GHz con IP estática 192.168.1.16** (autoconnect-priority 20 vs 5 de
+la 5G, ligada a wlan0) → 0% pérdida y ~8 ms. Boot fantasma del 04 explicado:
+wlan0 falló al reasociar a la 5G (13:51, `CONN_FAILED`/`no-secrets`) y la Pi
+corrió sin red hasta el apagado limpio de 15:05 (botón de encendido = shutdown
+graceful si ya estaba viva). Pendiente opcional: reserva DHCP de .16 en el
+router. Trampa CLI documentada: daemon de `ros2` queda zombi
+(`!rclpy.ok()`) tras reiniciar contenedores → `ros2 daemon stop` antes de
+diagnosticar; verificar /scan mejor por los logs de rf2o.
+
+**Sesión 2026-07-05 (tarde) — energía y CAD:** decisión de batería: **pack de
+taladro 20V compatible DeWalt** (2×6 Ah Waitley ~$323k) + cuna adaptadora con
+fusible (~$39k) + buck 20 A→12 V (~$75k) + 2º INA219 en 0x41 (lado pack) +
+alarma buzzer; dock Fase 5 rediseñado a "dock tonto (24 V) / robot listo
+(CC/CV 21 V a bordo conmutado por ROS)". CAD iniciado: `cad/plataforma.scad`
+(OpenSCAD paramétrico) — **WAVER CRAB**: bandeja, bahía de batería pasante
+trasera, torre-periscopio del lidar (regla: nada cruza su plano), visor OAK,
+2 brazos cangrejo con pinza (servos del inventario). `apt full-upgrade`
+ejecutado sin errores (reboot de prueba pendiente). Arquitectura completa
+documentada en **docs/ARQUITECTURA.md** (estudio). Próximo CAD: migrar a
+Onshape edu (ensambles con juntas/límites, import STEP, onshape-to-robot→URDF).
+
 **Deuda técnica para Fase 3:**
+- **Derrape del mapa en giros** (observado mapeando 2026-07-05): rf2o a 10 Hz
+  pierde el hilo en rotaciones rápidas (sin encoders). Mitigación de manejo:
+  giros lentos + pausa, cerrar lazos. Fix estructural pendiente: fusionar el
+  giroscopio del QMI8658 (imu0, velocidad angular yaw) en ekf.yaml para dar
+  referencia inercial a los giros; evaluar también minimum_travel_heading de
+  slam_toolbox.
+- ~~Zona muerta de WiFi~~ **RESUELTO 2026-07-05**: la causa raíz de TODA la
+  inestabilidad de red era el **módulo WiFi interno de la Pi dañado por un
+  golpe** (señal -80 dBm al lado del router, boot fantasma, carrusel de IPs).
+  Config final: **Realtek RTL8821CU USB (wlan1) como única interfaz**, JEJEN_5G
+  por defecto anclada por MAC con IP fija 192.168.1.16, JEJEN 2.4 GHz de
+  respaldo automático (misma IP), interna deshabilitada con
+  `dtoverlay=disable-wifi`, deep-sleep rtw88 off, udev anti-autosuspend USB.
+  Resultado: Pi→router 0% pérdida / 2.3 ms. Nota: en rincones, el 5G puede
+  ceder al respaldo 2.4 con un mini-corte (comportamiento esperado). Los
+  warnings "failed to get tx report" del rtw88 son cosméticos. Si queda varado
+  sin señal: empujarlo rodando, no alzarlo (secuestra al SLAM).
 - **Celdas 18650 agotadas** (sag ~1 V con ráfaga de CPU, ~2 h de autonomía):
   decidido reemplazo por **LiPo/Li-ion 3S CON BMS integrado**, ≥5 Ah (XT60);
   cargarla externamente si es RC pelada — nunca por el UPS sin verificar.
