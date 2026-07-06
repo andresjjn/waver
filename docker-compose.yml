@@ -8,6 +8,10 @@
 # ipc: host (FastDDS usa memoria compartida entre procesos del mismo host;
 # sin /dev/shm compartido los contenedores se descubren pero no llegan datos).
 # El dashboard queda en http://<IP-de-la-Pi>:8000
+#
+# mem_limit por servicio (2026-07-06): un proceso desbocado (battery_node
+# intento asignar 64 GB tras un glitch USB/DDS) congelo TODA la Pi — con
+# limite de cgroup el OOM killer mata solo ese proceso y restart lo revive.
 
 services:
 
@@ -26,6 +30,7 @@ services:
                cd /ros2_ws && colcon build --symlink-install &&
                source /ros2_ws/install/setup.bash &&
                ros2 launch waver_base base.launch.py"
+    mem_limit: 1g
     restart: unless-stopped
 
   # Lidar STL-06 -> /scan
@@ -43,6 +48,7 @@ services:
                cd /ros2_ws && colcon build &&
                source /ros2_ws/install/setup.bash &&
                ros2 launch ldlidar_stl_ros2 waver_ld06.launch.py"
+    mem_limit: 1g
     restart: unless-stopped
 
   # OAK-D Lite -> /oak/rgb, /oak/stereo, /oak/points, /oak/nn (YOLO en camara)
@@ -56,11 +62,19 @@ services:
       - ./ROS2_Docker_oak_camera/config/oak.yaml:/oak.yaml
     device_cgroup_rules:
       - 'c 189:* rmw'
+    # 2026-07-06: la oak venia en CycloneDDS (ENV del Dockerfile). Cada rebote
+    # USB de la camara relanzaba su descubrimiento y los participantes FastDDS
+    # (base/lidar/slam) respondian con asignaciones absurdas de 40-74 GB ->
+    # tormenta de logs del kernel 6.12 -> Pi congelada. Homogeneizado a
+    # FastDDS (override del ENV) para eliminar el vector cross-vendor.
+    environment:
+      - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
     # OJO: todo el ros2 launch en UNA linea — con "command: >" las lineas mas
     # indentadas conservan el salto de linea y bash corta el comando ahi.
     command: >
       bash -c "source /opt/ros/humble/setup.bash &&
                ros2 launch depthai_ros_driver camera.launch.py params_file:=/oak.yaml pointcloud.enable:=true parent_frame:=oak_link"
+    mem_limit: 2g
     restart: unless-stopped
 
   # SLAM 2D (Fase 3): rf2o + EKF + slam_toolbox -> /map
@@ -79,6 +93,7 @@ services:
                cd /ros2_ws && colcon build --symlink-install &&
                source /ros2_ws/install/setup.bash &&
                ros2 launch waver_slam slam.launch.py"
+    mem_limit: 2g
     restart: unless-stopped
 
   # Nav2 (Fase 4): navegacion autonoma -> publica en nav_vel (prioridad 10)
@@ -95,6 +110,7 @@ services:
     command: >
       bash -c "source /opt/ros/humble/setup.bash &&
                ros2 launch /launch/nav2.launch.py"
+    mem_limit: 1500m
     restart: unless-stopped
 
   # Dashboard Vigilante Nocturno (rosbridge 9090, video 8080, web 8000,
@@ -115,4 +131,5 @@ services:
                ros2 launch foxglove_bridge foxglove_bridge_launch.xml &
                cp /www_live/index.html /www_live/app.js /www/ 2>/dev/null;
                cd /www && python3 -m http.server 8000"
+    mem_limit: 1g
     restart: unless-stopped

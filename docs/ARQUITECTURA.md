@@ -8,7 +8,7 @@ lo que se transfiere a cualquier robot futuro; los comandos se olvidan.
 ## 1. Vista de pájaro
 
 ```
- Mac (dev/teleop)          Raspberry Pi 5 (8GB, Bookworm 64)          ESP32 (firmware propio)
+ Mac (dev/teleop)          Raspberry Pi 5 (4GB, Bookworm 64)          ESP32 (firmware propio)
  ┌──────────────┐   WiFi   ┌──────────────────────────────┐   I2C    ┌──────────────────┐
  │ Foxglove app │◄────────►│ Docker: 5 servicios + 2      │◄────────►│ waver_slate_v2   │
  │ joystick py  │  5GHz    │ perfiles (ROS2 Humble)       │  0x11    │ motores+failsafe │
