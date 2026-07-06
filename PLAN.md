@@ -75,6 +75,43 @@ ejecutado sin errores (reboot de prueba pendiente). Arquitectura completa
 documentada en **docs/ARQUITECTURA.md** (estudio). Próximo CAD: migrar a
 Onshape edu (ensambles con juntas/límites, import STEP, onshape-to-robot→URDF).
 
+**Sesión 2026-07-06 — reboot aprobado, audio y el freeze de los 64 GB:**
+reboot post-upgrade aprobado (kernel 6.12.93, `disable-wifi` mató la interna,
+la Realtek heredó `wlan0` y la conexión la siguió por el anclaje MAC, los 5
+contenedores auto-arrancaron). Lección NM: **autoconnect-priority solo se
+evalúa AL conectar** — si el boot cae en el respaldo 2.4 nunca migra solo a
+la 5G → instalado `wifi-prefer-5g.timer` (reintenta JEJEN_5G a los 90 s del
+arranque). **HAT DE AUDIO NUEVO**: tarjeta tipo HAT con speakers estéreo,
+enumera como USB ("USB PnP Audio Device", **ALSA card 2, `plughw:2,0`**);
+probados con tono 440 Hz y voz (`espeak-ng -v es-419 --stdout | aplay -D
+plughw:2,0`, ya instalado). Usos: alertas de voz/alarma de batería (sustituye
+al buzzer pendiente), intercomunicador Fase 6, feedback de estado del robot.
+`/oak/points` **RESUELTO** al reconectar el USB de la cámara (publica nubes;
+sigue en USB 2.0 hasta comprar el cable A-3.0→C). **Incidente épico #6**: al
+manipular los cables USB, `battery_node` (código nativo rclpy/FastDDS, no el
+.py) intentó asignar **64 GB de RAM** → userland de la Pi congelado (ping
+vivo, sshd/web muertos, OLED "sin datos") → ciclo de energía. Mitigación:
+**`mem_limit` por servicio en docker-compose** (el OOM del cgroup mata solo
+al proceso desbocado y restart lo revive; la Pi nunca más se congela entera).
+Causa raíz nativa pendiente de observar si reincide. **Forense ampliado**: en
+el 2º freeze la tormenta la protagonizaron battery_node (74 GB), cmd_vel (67),
+imu_node (74) — TODOS los participantes FastDDS, no un nodo → segmento SHM
+corrupto/gigante que todos intentan mapear; correlación fuerte con el arranque
+del pipeline de la OAK (2/2 freezes con cámara activa, 0 tormentas sin ella).
+**Giro del caso**: la oak YA corría CycloneDDS (ENV del Dockerfile) — el bug
+era **cross-vendor**: cada rebote USB del conector flaky de la cámara relanzaba
+su descubrimiento CycloneDDS y los participantes FastDDS respondían con las
+asignaciones absurdas; el kernel 6.12 (de ayer) loguea cada negación → tormenta
+de logs → freeze (el kernel viejo negaba en silencio, por eso nunca pasó
+antes). **FIX APLICADO Y APROBADO**: oak homogeneizada a FastDDS
+(`RMW_IMPLEMENTATION=rmw_fastrtps_cpp` en compose) + experimento controlado con
+tripwire (`/usr/local/bin/oak_tripwire.sh`): 15 min limpios, `/oak/points`
+verificado cross-container hasta waver_slam. El cable USB nuevo sigue siendo
+prioridad: el conector flaky era el gatillo físico. **Descubrimiento**: la Pi 5 es de **4 GB**
+(revision c04170), no de 8 como asumían los docs — presupuesto de RAM real:
+~2.7 GB disponibles con el stack corriendo; refuerza el upgrade a Jetson Orin
+Nano para la Fase 7 (waver_brain local).
+
 **Deuda técnica para Fase 3:**
 - **Derrape del mapa en giros** (observado mapeando 2026-07-05): rf2o a 10 Hz
   pierde el hilo en rotaciones rápidas (sin encoders). Mitigación de manejo:
@@ -98,14 +135,14 @@ Onshape edu (ensambles con juntas/límites, import STEP, onshape-to-robot→URDF
   cargarla externamente si es RC pelada — nunca por el UPS sin verificar.
 - **Fijación mecánica de conectores USB** (lidar y OAK): ambos se soltaron
   durante la sesión al manipular el robot — brida/hot-glue antes de rondas.
-- `/oak/points` mudo desde la rotación 180° de los sensores (publisher existe,
-  no fluyen datos): depurar interacción con el pipeline de pointcloud.
+- ~~`/oak/points` mudo desde la rotación 180°~~ **RESUELTO 2026-07-06**: era el
+  USB físicamente suelto; reconectado publica nubes de 1280 de ancho.
 - La OAK negocia **USB 2.0** (`USB SPEED: HIGH`): el adaptador USB-A→C actual solo
   cablea pines 2.0. Conseguir cable USB-A 3.0→C de una pieza (marcado SS/5Gbps) y
   conectar al puerto azul → debe decir `SUPER`. Nota: el USB-C de la Pi 5 es SOLO
   alimentación, nunca para la cámara.
-- `/oak/points` no aparece pese a `pointcloud.enable:=true` — revisar config del
-  driver depthai antes del SLAM.
+- ~~`/oak/points` no aparece pese a `pointcloud.enable:=true`~~ **RESUELTO
+  2026-07-06** (mismo caso: USB suelto).
 - `usb_max_current_enable=1` ya aplicado en `/boot/firmware/config.txt` (la OAK
   necesita >600 mA).
 
