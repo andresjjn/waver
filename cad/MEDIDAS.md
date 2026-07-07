@@ -50,7 +50,31 @@ diseño sea paramétrico como el SCAD.
 | MG996R | 40.7 × 19.7 × 42.9 | flange 54.5 largo, eje descentrado 10.3 hacia el frente |
 | S3003 | 40.0 × 20.0 × 38.0 | mismo patrón de eje aprox |
 
-## Brazos cangrejo (cadena por lado: yaw S3003 → hombro MG996R → codo MG996R → muñeca S3003 → pinza MG996R)
+**Horns comprados (disco aluminio 25T)**: ⌀20 mm, 4 agujeros **M3 roscados en
+patrón de 14 mm**, tornillo central M3×8 al eje (rosca interna del MG996R) —
+los eslabones impresos se diseñan con ese patrón de 4×M3 a 14 mm.
+
+## Brazos cangrejo — cadena ACTUALIZADA 2026-07-06 (6 DOF por lado)
+
+`yaw S3003 → hombro MG996R → codo MG996R → muñeca-pitch S3003 → kit LG-KT
+(rotación 180° + pinza, servos HS-422 incluidos)`
+
+**Pinza resuelta con hardware en mano**: 2× Lynxmotion Little Grip Kit (LG-KT)
+del inventario de Andrés — apertura 3.3 cm, 2× HS-422 por kit (4.8-6 V, mismo
+riel UBEC), montaje patrón Lynxmotion.
+
+**CAD oficial de la pinza ENCONTRADO (2026-07-06, verificado)**:
+- STEP oficial: [lg.step.zip](https://wiki.lynxmotion.com/info/wiki/lynxmotion/download/servo-erector-set-robots-kits/ses-v1-cad/WebHome/lg.step.zip)
+  (página madre: [SES-V1 3D CAD Models](https://wiki.lynxmotion.com/info/wiki/lynxmotion/view/ses-v1/ses-v1-system/ses-v1-cad/) — también IGES y Parasolid)
+- Servo Hitec estándar (HS-422): `servo.step.zip` y horns `servohorns.step.zip` en la misma página
+- Alternativa comunidad: [GrabCAD Little Grip](https://grabcad.com/library/lynxmotion-little-grip-1) (SolidWorks, ensamblada)
+- Montaje real: 3 tornillos **4-40 × 3/8"** con tuercas a través de placa (el cuerpo del
+  servo bloquea el 4º agujero) — documentado en la [guía del brazo AL5A](https://wiki.lynxmotion.com/info/wiki/lynxmotion/view/ses-v1/ses-v1-robots/ses-v1-arms/al5a-arm-rev-2-1/)
+- Atajo comprable: placa adaptadora oficial [LGA-KT en RobotShop](https://www.robotshop.com/products/lynxmotion-little-grip-kit-lga-kt) (~US$8)
+- ⚠️ Descargar desde navegador (Cloudflare bloquea scripts); licencia: solo uso virtual/personal.
+Solo se diseñan los 3 eslabones del medio — base: brazo Onshape de
+vishnusivampeta (CC BY 4.0). Los 2× MG996R del carrito pasan a repuestos.
+⚠️ HS-422 = engranaje plástico ~3.3 kg·cm: carga máx 100-150 g respetada.
 
 | Variable | Valor | Nota |
 |---|---|---|
@@ -86,3 +110,15 @@ tapa, alto real del chasis, pack real + cuna cuando lleguen.
 | Pack DeWalt XR 5Ah | [GrabCAD DCB184](https://grabcad.com/library/dewalt-battery-dcb184-18v-xr-5ah-1) | .stp, el que mejor encaja con 116×76×62 |
 | Cuna DeWalt | [GrabCAD battery-holder](https://grabcad.com/library/battery-holder-dewalt-1) | .stp, calidad modesta — **verificar riel contra pack real** |
 | Chasis Wave Rover | [WAVE_ROVER_MODEL_STL.rar](https://files.waveshare.com/upload/e/ec/WAVE_ROVER_MODEL_STL.rar) (wiki oficial) | ⚠️ solo STL (malla, no editable) — usar como referencia visual + plano de la tapa del wiki |
+
+## Diseños de la comunidad para adaptar (verificados 2026-07-06)
+
+| Diseño | Enlace | Por qué |
+|---|---|---|
+| ⭐ Brazo 6DOF MG996R (vishnusivampeta) | [thing:6152986](https://www.thingiverse.com/thing:6152986) | **Fuente editable en Onshape**, CC BY 4.0 — copiar documento y adaptar eslabones/portaservos |
+| ⭐ Pinza TungTran MG996R | [thing:6900287](https://www.thingiverse.com/thing:6900287) | Garra probada para nuestro servo exacto, CC BY-SA, tornillería M3 |
+| Pinza flexible (plan B) | [cults3d flexible gripper](https://cults3d.com/en/3d-model/various/robot-gripper-flexible-servo-mg995-mg996r) | Mordazas compliant — agarra irregulares sin control de fuerza |
+| Brazo HowToMechatronics | [tutorial+STEP](https://howtomechatronics.com/tutorials/arduino/diy-arduino-robot-arm-with-smartphone-control/) | 3× MG996R hombro/codo como el CRAB; STEP escalable, BOM y video |
+| EEZYbotARM MK2 | [thing:1454048](https://www.thingiverse.com/thing:1454048) | Miles de makes; [librería Python IK](https://github.com/meisben/easyEEZYbotARM); ⚠️ CC BY-NC |
+| Bracket MG996R press-fit | [printables 11782](https://www.printables.com/model/11782-hobby-servo-holder-for-mg996r) | Referencia de portaservo para hombros |
+| Rover + brazo 6DOF | [makerworld 1342319](https://makerworld.com/en/models/1342319-rc-rover-with-robot-arm-6-dof) | Lo más parecido publicado — **no existe rover de brazos dobles: el CRAB sería original** |
