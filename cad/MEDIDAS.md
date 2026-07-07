@@ -84,6 +84,38 @@ vishnusivampeta (CC BY 4.0). Los 2× MG996R del carrito pasan a repuestos.
 | `l_garra` | 72 | muñeca → punta de pinza |
 | Pose demo | yaw 52°, hombro 26°, codo −58°, muñeca −14°, pinza 24° | para validar rangos en Onshape con *joint limits* |
 
+## MuñecaCRAB v1 — pieza nueva diseñada (sesión nocturna 2026-07-07)
+
+Part Studio **MunecaCRAB** en la copia de Andrés del brazo 6DOF
+([elemento c4d69b72](https://cad.onshape.com/documents/859a0f262528fc744c10b004/w/0f122365df7b490cd4a487c1/e/c4d69b72efbd309b1783fae4)).
+Reemplaza TODO el mecanismo interno del antebrazo original (tubo JointFour +
+micro 9g en corredera, ya suprimidos): la muñeca-roll pasa a un MG996R directo.
+
+**Decisión de cadena**: el diseño original NO tiene muñeca-pitch — su roll era
+el tubo central. Fieles a eso: `muñeca-roll MG996R (eje colineal al antebrazo)
+→ paleta adaptadora → pinza LG-KT usada SOLO como garra` (su servo de rotación
+180° queda de repuesto — sería roll redundante).
+
+Geometría (un solo sólido, imprimible sin soportes salvo pared izquierda):
+| Elemento | Medida | Nota |
+|---|---|---|
+| Copa-abrazadera | Ø40.4 ext / Ø34.4 int × 10 alto | calza sobre anillo punta jaula (Ø34) con holgura 0.4 |
+| Techo | Ø40.4 × 3, a ras | fusionado dentro del faldón (inserción útil 7 mm) |
+| Cuna servo | int 41.0×20.2, paredes 3, alto 28 | MG996R vertical, eje ARRIBA |
+| Offset cuna | centro caja a −10.2 mm en X | el EJE del servo queda colineal con el eje del antebrazo |
+
+**Pendiente v2** (próxima sesión):
+1. 2 agujeros Ø2.9 pasantes en el faldón a z=3.5 (prisioneros M3 que muerden el
+   anillo) — Sketch 4 ya dibujado y acotado; el corte no se pudo seleccionar por
+   automatización → **taladrar a mano** o completar con mouse real.
+2. Pestañas de flange + 4 agujeros patrón MG996R (~49.4×10 mm **[calibrar con
+   el servo físico]**).
+3. Refuerzo/gusset bajo el extremo izquierdo de la cuna (vuela 13.6 mm fuera
+   del disco por el offset del eje).
+4. **PaletaLGKT**: disco Ø30×4 — 4×Ø3.2 en círculo Ø14 (al horn) + 3×Ø3.2 para
+   4-40 al patrón de la placa trasera del LG-KT **[calibrar con la pinza física
+   de Andrés]** + pasante central Ø6.
+
 ## Checklist de la sesión Onshape
 
 1. Crear documento "WAVER CRAB" + tabla de Variables con lo de arriba.
