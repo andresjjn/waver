@@ -166,7 +166,26 @@ tapa, alto real del chasis, pack real + cuna cuando lleguen.
 | Cuna DeWalt | [GrabCAD battery-holder](https://grabcad.com/library/battery-holder-dewalt-1) | .stp, calidad modesta — **verificar riel contra pack real** |
 | Chasis Wave Rover | [WAVE_ROVER_MODEL_STL.rar](https://files.waveshare.com/upload/e/ec/WAVE_ROVER_MODEL_STL.rar) (wiki oficial) | ⚠️ solo STL (malla, no editable) — usar como referencia visual + plano de la tapa del wiki |
 
-## Diseños de la comunidad para adaptar (verificados 2026-07-06)
+## Búsqueda brazo COMPACTO MG996R (2026-07-07 — el de vishnu quedó grande)
+
+Motivo: el brazo de vishnu es de escritorio (alcance ~40 cm, torreta de 5
+servos arriba = pesado y CG alto para un rover de 194×110). Candidatos:
+
+| Diseño | Servos | Tamaño/clase | CAD | Licencia | Veredicto |
+|---|---|---|---|---|---|
+| ⭐ **ARA — Another Robot Arm** ([printables 70258](https://www.printables.com/model/70258-ara-another-robot-arm), [GitHub](https://github.com/Hobbesdcc/RobotArm)) | **3× MG996R** + 1 micro (efector) | clase EEZYbot: base ~⌀80-100, alcance ~250-280 | STL (hecho **en Onshape**, fuente no publicada) | CC BY-NC-SA 4.0 | **RECOMENDADO** — topología paralelogramo: los 3 servos viven EN LA BASE → CG bajo, ideal rover; micro del efector se reemplaza por LG-KT |
+| Emre Kalem ([makerworld 1134925](https://makerworld.com/en/models/1134925-robotic-arm-with-servo-arduino)) | 4× MG995/996R + 3× MG90S | escritorio (rodamientos 608+6203) | STL/CAD | ❌ estándar MakerWorld: **prohíbe derivados/compartir mods** | El más probado (6.3k builds, [port ESP32](https://github.com/peterz0310/robot-arm)) pero grande y licencia incompatible con nuestro GitHub |
+| Robot Arm MG996R ([cults3d](https://cults3d.com/en/3d-model/gadget/robot-arm-mg996r)) | 5× MG996R | serial (como vishnu) | STL | ? (Cults bloquea acceso) | Misma topología pesada que ya descartamos |
+| Compact Robot Arm ([printables 818975](https://www.printables.com/model/818975-compact-robot-arm-arduino-3d-printed)) | lista solo en video YouTube | compacto | STL | ? | Documentación floja |
+| Brazo Arduino MG996r ([makerworld 1055189](https://makerworld.com/en/models/1055189-arduino-mg996r-arm)) | 6× MG996R | ? | STL | CC BY-SA ✓ | "Work in progress", sin instrucciones ni BOM |
+
+**Análisis CRAB con ARA**: 2 brazos = 6× MG996R (inventario ✓). Cadena:
+yaw base → hombro → codo (paralelogramo, efector siempre horizontal) →
+PaletaLGKT → **LG-KT completo con SUS DOS servos** (rotación 180° = roll +
+pinza) = 5 DOF controlables por brazo. Torque: MG996R (9-11 kg·cm) en
+topología diseñada para MG90S (2.2) ≈ 4× margen → carga ~300 g en punta ✓.
+CC BY-NC-SA: uso personal OK; publicar mods exige misma licencia y no
+comercial (compatible con repo hobby).
 
 | Diseño | Enlace | Por qué |
 |---|---|---|
