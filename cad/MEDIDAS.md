@@ -116,6 +116,29 @@ Geometría (un solo sólido, imprimible sin soportes salvo pared izquierda):
    4-40 al patrón de la placa trasera del LG-KT **[calibrar con la pinza física
    de Andrés]** + pasante central Ø6.
 
+## CRAB Ensamble — brazos dobles montados (madrugada 2026-07-07) ✅
+
+Assembly **"CRAB Ensamble"** ([elemento 8cfee54b](https://cad.onshape.com/documents/859a0f262528fc744c10b004/w/0f122365df7b490cd4a487c1/e/8cfee54be09e214bc96895ce)):
+**PlacaCRAB (200×180×4) fija + 2 instancias del brazo completo, cada una a ±45°.**
+
+| Elemento | Mate | Valores |
+|---|---|---|
+| PlacaCRAB | Fix | insertada en el origen (centro placa = origen) |
+| Brazo 1 | Fastened → origen ensamble | offset (−4, −6.4, +0.7) cm, Rotate Z **+45°** |
+| Brazo 2 | Fastened → origen ensamble (vía mate connector en origen de instancia) | offset (−4, +6.4, 0) cm, Rotate Z **−45°** |
+
+Notas de diseño:
+- Placa 180 de ancho (vs 144 de la bandeja): las bases 90×90 rotadas 45°
+  (diagonal 127) exigen centros a ±64 → los pods cuelgan ~38 mm por fuera de
+  cada costado = estética cangrejo intencional. **[calibrar] al armar**: si se
+  prefiere sin voladizo, girar solo la tornamesa (servo yaw) y dejar bases a 0°.
+- Separación entre diamantes: 0.8 mm en la línea central (¡justo sin chocar!).
+- El Z de un brazo usa +0.7 (conector en cara superior de su base) y el otro 0
+  (conector en origen de instancia = fondo de base) — mismos 4 mm de placa.
+- Técnica ganadora para automatización: mate connector explícito en el origen
+  de instancia + conector del origen del ensamble + offsets numéricos + campo
+  "Rotate about Z" del Fastened (acepta ángulo arbitrario — ahí van los 45°).
+
 ## Checklist de la sesión Onshape
 
 1. Crear documento "WAVER CRAB" + tabla de Variables con lo de arriba.
