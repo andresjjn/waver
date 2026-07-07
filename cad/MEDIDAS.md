@@ -179,7 +179,34 @@ servos arriba = pesado y CG alto para un rover de 194×110). Candidatos:
 | Compact Robot Arm ([printables 818975](https://www.printables.com/model/818975-compact-robot-arm-arduino-3d-printed)) | lista solo en video YouTube | compacto | STL | ? | Documentación floja |
 | Brazo Arduino MG996r ([makerworld 1055189](https://makerworld.com/en/models/1055189-arduino-mg996r-arm)) | 6× MG996R | ? | STL | CC BY-SA ✓ | "Work in progress", sin instrucciones ni BOM |
 
-**Análisis CRAB con ARA**: 2 brazos = 6× MG996R (inventario ✓). Cadena:
+### Giro 2026-07-07: brazos de ALUMINIO comprados (en vez de imprimir)
+
+**Familia ROT3U 6DOF** — el estándar de brackets de aluminio diseñado para
+MG995/MG996R, compatible con nuestros **horns 25T ya comprados**:
+
+| Opción | Contenido | Precio | Fuente |
+|---|---|---|---|
+| ROT3U **sin servos** | 490 g de brackets: 5 multifunción + 4 U-largos + 1 L + 3 U-cintura + 4 rodamientos + garra + tornillería | US$49 | [diymore.cc](https://www.diymore.cc/products/diymore-rot3u-6dof-aluminium-robot-arm-mechanical-robotic-clamp-claw-kit-for-arduino-mega2560) / [Amazon B01LW0LUPT](https://www.amazon.com/diymore-Aluminium-Mechanical-Robotic-Arduino/dp/B01LW0LUPT) |
+| ROT3U + 6× MG996R + horns 25T | kit completo | ~US$100 | [Amazon B0CJ4WR949](https://www.amazon.com/diymore-Aluminium-Mechanical-Robotic-Unassembled/dp/B0CJ4WR949) |
+| Specs config completa 6DOF | alcance 355 mm, alto 460 mm, garra abre 55 mm | — | demasiado grande para el rover tal cual |
+
+**Plan CRAB-aluminio (recomendado): 1 kit ROT3U → DOS brazos cortos de 3DOF**
+- Los brackets son LEGO de aluminio: cada brazo corto = 1 U-cintura (yaw) +
+  1 multifunción + 1 U-largo (hombro) + 1 multifunción + 1 U-largo (codo).
+  El kit trae piezas para los dos brazos (sobra la garra → repuesto).
+- Cadena por brazo: yaw → hombro → codo → **LG-KT completo (roll + pinza)**
+  = 5 DOF útiles. 3× MG996R por brazo = 6 total (inventario ✓).
+- Alcance resultante ~200-250 mm y ~570 g/brazo con servos → 1.14 kg total,
+  viable para el rover; con 355 mm completos serían 1.6+ kg y volcadura.
+- La PaletaLGKT cambia de interfaz: horn 25T → placa trasera LG-KT (igual),
+  y el bracket multifunción del extremo ya tiene patrón de tornillos M3.
+- Guía de armado de referencia: [AutomaticAddison DIY 6DOF](https://automaticaddison.com/how-to-build-a-diy-aluminium-6-dof-robotic-arm-from-scratch/)
+- Nota: brazos MG996R *pre-ensamblados* casi no existen (los ensamblados usan
+  servos de bus propietarios, p.ej. Hiwonder). El kit se arma con tornillos
+  en 1-2 h, sin impresión ni pegamento.
+
+**Análisis CRAB con ARA** (plan impresión 3D, alternativa): 2 brazos = 6×
+MG996R (inventario ✓). Cadena:
 yaw base → hombro → codo (paralelogramo, efector siempre horizontal) →
 PaletaLGKT → **LG-KT completo con SUS DOS servos** (rotación 180° = roll +
 pinza) = 5 DOF controlables por brazo. Torque: MG996R (9-11 kg·cm) en
