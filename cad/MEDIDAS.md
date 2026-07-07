@@ -190,7 +190,36 @@ MG995/MG996R, compatible con nuestros **horns 25T ya comprados**:
 | ROT3U + 6× MG996R + horns 25T | kit completo | ~US$100 | [Amazon B0CJ4WR949](https://www.amazon.com/diymore-Aluminium-Mechanical-Robotic-Unassembled/dp/B0CJ4WR949) |
 | Specs config completa 6DOF | alcance 355 mm, alto 460 mm, garra abre 55 mm | — | demasiado grande para el rover tal cual |
 
-**⭐ MEJOR LISTADO ALIEXPRESS (verificado 2026-07-07, Youfang Smart Store)**
+### ✅ DECISIÓN FINAL 2026-07-07: 2× brazo completo aluminio robusto (ThanksBuyer)
+
+Andrés eligió **dos brazos 6DOF COMPLETOS** (no versión corta) — razón: módulo
+de aprendizaje reutilizable (rover hoy; péndulo invertido / cuádruped mañana),
+invertir en calidad una vez.
+
+**Producto**: [Brazo 6DOF metal robusto, item 1005007215923987](https://es.aliexpress.com/item/1005007215923987.html) — ThanksBuyer
+(5.251 seguidores, 91.9% pos). Variante **"Arm Only"** (sin servos).
+- Precio COP 286.704 c/u + envío COP 46.860 → **2 brazos ≈ COP 620.000 (~US$155)**
+- Llega 22 jul–1 ago (25 días). Reseñas 3.7★ pero la única negativa ("sin
+  instrucciones/código") es irrelevante: usamos ROS2 + ESP32/PCA9685 propios.
+- Placas gruesas = 1.37 kg c/u (2.7 kg el par sobre el rover → extender lento;
+  el peso no importa cuando vaya a base fija/péndulo).
+
+**✅ COMPATIBILIDAD MG996R VERIFICADA (ficha oficial del vendedor)**:
+| | Frame diseñado p/ (servo 25 kg) | MG996R | Encaja |
+|---|---|---|---|
+| Tamaño | 40 × 20,5 × 40,5 mm | 40,7 × 19,7 × 42,9 | ✅ misma clase estándar 40×20 |
+| Spline | **25T** | **25T** | ✅ horns 25T comprados sirven directo |
+
+- Servo count: 2 brazos × 6 = 12 servos; Andrés tiene **13 MG996R** → +1 repuesto.
+- ⚠️ Torque: frame pensado p/ 25 kg·cm; MG996R da ~10 → hombro/base son las
+  juntas a vigilar con carga. Upgrade no destructivo: cambiar SOLO ese servo por
+  **DS3225 (25 kg, mismo cuerpo 40×20, mismo 25T)** si hace falta. Sin rediseño.
+- Las 2× LG-KT quedan como opción para reemplazar la garra nativa del brazo.
+- ⛔ CAD Onshape CRAB con brazo vishnu → OBSOLETO (era maqueta). Real = aluminio.
+  Solo se conserva la idea de placa de montaje sobre el rover a ±45°.
+
+---
+**Listado alternativo delgado/liviano (Youfang) — descartado por peso pero útil de referencia:**
 [item 1005005352898104](https://es.aliexpress.com/item/1005005352898104.html) — ROT3U 6DOF exacto (estilo que le gusta a Andrés):
 - Variante "Only arm frame" (sin servos, usa nuestros 6× MG996R): **COP 118.475**
 - **Envío a Colombia COP 75.301** (95.8% ≤ 25 días) → total **~COP 194.000 (~US$49)**
