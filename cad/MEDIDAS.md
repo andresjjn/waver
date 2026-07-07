@@ -190,6 +190,22 @@ MG995/MG996R, compatible con nuestros **horns 25T ya comprados**:
 | ROT3U + 6× MG996R + horns 25T | kit completo | ~US$100 | [Amazon B0CJ4WR949](https://www.amazon.com/diymore-Aluminium-Mechanical-Robotic-Unassembled/dp/B0CJ4WR949) |
 | Specs config completa 6DOF | alcance 355 mm, alto 460 mm, garra abre 55 mm | — | demasiado grande para el rover tal cual |
 
+**⭐ MEJOR LISTADO ALIEXPRESS (verificado 2026-07-07, Youfang Smart Store)**
+[item 1005005352898104](https://es.aliexpress.com/item/1005005352898104.html) — ROT3U 6DOF exacto (estilo que le gusta a Andrés):
+- Variante "Only arm frame" (sin servos, usa nuestros 6× MG996R): **COP 118.475**
+- **Envío a Colombia COP 75.301** (95.8% ≤ 25 días) → total **~COP 194.000 (~US$49)**
+- 4.5★, 37 reseñas, 303 vendidos; vendedor 92.8% pos, 6280 seguidores
+- Bonus: guía de armado clara, **modelo 3D en Fusion360**, tornillería de sobra,
+  acepta upgrade a servos 25-40 kg·cm en la base (confirmado por reseña)
+- ⚠️ Reseña honesta: 2 juntas son "acoplador sobre eje estriado" = con juego;
+  el eslabón de extensión cuesta fijarlo solo con prisioneros → imprimir
+  soportes estabilizadores + usar arandelas nyloc/loctite. Relevante porque
+  el brazo carga peso; en nuestros brazos CORTOS el brazo de momento es menor.
+- Comparación: el listado que Andrés mandó primero (Hydraulic Tool Store) era
+  COP 191k + **COP 285k de envío** = COP 477k. Este es 60% más barato puesto.
+- Alternativas más baratas sin verificar envío: [COP 82.510 4.6★ 109 vend](https://es.aliexpress.com/w/wholesale-6DOF-aluminum-robot-arm-MG996R.html)
+  y [COP 131.250 "excluido Servo" 4.6★ 158 vend].
+
 **Plan CRAB-aluminio (recomendado): 1 kit ROT3U → DOS brazos cortos de 3DOF**
 - Los brackets son LEGO de aluminio: cada brazo corto = 1 U-cintura (yaw) +
   1 multifunción + 1 U-largo (hombro) + 1 multifunción + 1 U-largo (codo).
