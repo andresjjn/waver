@@ -361,8 +361,21 @@ F0 = cerrar decisiones de arquitectura ANTES del primer URDF. Bitácora:
 - Costo de CG aceptado: pack a ~17cm (−2° de vuelco vs bahía baja) a cambio
   de portabilidad total. Regla operativa: **navegar con torso ABAJO**
   (θ≈18° vs 14° arriba) — invariante del behavior tree (F7).
-- Presupuesto: trabajo 38-45W → ~3h por carga (120Wh al 85% ≈ 100Wh);
-  recarga ~2h → ritmo trabajo:carga ≈ 3:2 ✓ el ciclo de la maratón cierra.
+- Presupuesto energético (estimado; MEDIR con INA3221 en F4 antes del dock):
+  - Consumo del pack (con pérdidas buck+UBEC ~10-15%) por estado:
+    standby brazos-sin-energía ~20W · navegando torso-abajo ~45W ·
+    manipulando detenido ~65W · **mezcla real de maratón ~45-50W**.
+  - Autonomía con 120Wh al 85% ≈ 100Wh útiles: standby ~5h ·
+    **trabajo activo ~2 a 2.2h** (corrige el "3h" optimista anterior).
+  - 🃏 Comodín = 12× MG996R: en pose compacta o depotenciados casi no gastan;
+    sosteniendo torque pueden sumar 40-70W. Mitigación de diseño: NUNCA todo
+    a la vez (navegar=motores sí/servos plegados; manipular=detenido) +
+    depotenciar servos ociosos. Incertidumbre ±100% hasta medir.
+  - Ritmo: ~2h trabajo + ~2h carga ≈ 12 ciclos/día, ~50% de jornada activa.
+    Para la maratón importa el RATIO trabajo:carga, no la autonomía absoluta.
+  - Palanca si hace falta más (el pack va en sub-chasis bajo = lastre bueno,
+    no cuenta contra los ≤4kg del ascensor): DeWalt 9Ah (~180Wh→~3.3h) o
+    12Ah (~240Wh→~4.5h + mejor estabilidad), a costa de peso para los motores.
 
 ### ✅ D4 — Contrato TORSO↔plataforma: **"4 tornillos + XT30 + USB"** (aprobado)
 - Mecánica: patrón 4-6× M4 en placa base del TORSO; cada plataforma aporta
