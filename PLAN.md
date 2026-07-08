@@ -1,5 +1,10 @@
 # Plan Maestro — Wave Rover + OAK-D Lite: de teleoperación a navegación autónoma
 
+> **📍 2026-07-07 — La meta del proyecto se redefinió: ver [PLAN MARATÓN](#-plan-maratón-2026-07-07--hoja-de-ruta-oficial) al final.**
+> Demo objetivo: pick & place autónomo en diorama de estantes + carga autónoma en dock
+> propio + días corriendo sin intervención, contando miles de repeticiones. Las fases
+> históricas de abajo siguen vigentes como cimiento; lo superado está marcado ⛔.
+
 Estado de partida (julio 2026): control de motores por I2C maduro (`waver_motor_driver`,
 nodo `motor_controller` suscrito a `/motor_commands`), teleop server en Pi 5 y cliente
 joystick en Docker funcionando por CycloneDDS, plantillas sueltas de cámara CSI y lidar
@@ -320,6 +325,12 @@ objetos que reconoce.
 
 ## FASE 5 — Energía y carga autónoma (el robot se cuida solo)
 
+> ⛔ **5.1 y 5.2 SUPERADAS por la decisión D3 del PLAN MARATÓN (2026-07-07)**: fuente
+> única = pack DeWalt 20V 6Ah DENTRO del módulo TORSO; el UPS 3S sale de la cadena
+> crítica; dock propio con pogo pins cargando a 20.4V (~85-90%) con el robot siempre
+> vivo (Jetson en espera). 5.3 y 5.4 siguen vigentes (docking AprilTag + battery_manager),
+> ahora como parte de F6 del plan maratón. Detalles en `cad/MEDIDAS.md` § F0.
+
 Prerequisito: fases 0–4 estables y medición real de consumo (el INA219 ya nos da
 voltaje/corriente en vivo — la telemetría de 2.2 sirve para levantar el perfil de
 consumo en teleop, patrulla y reposo antes de decidir batería).
@@ -409,24 +420,15 @@ Robot/plataforma:
 - **Dashboard web público en la Pi**: estado, mapa, vídeo y botones de misión,
   accesible desde cualquier móvil de la casa.
 
-Brazos bimanuales con servos reciclados (decidido 2026-07-04):
-- **Dos brazos de 3 GDL + pinza** (estilo cangrejo, esquinas frontales), alcance
-  corto 15-18 cm, carga ~100-150 g por pinza. Reparto de servos del inventario:
-  hombro elevación y codo = MG996R (los 4 existentes); pinzas = 2× MG996R **a
-  comprar** (agarrar = stall continuo → engranaje metálico obligatorio); hombro
-  giro (yaw) = 2× S3003 (no pelea contra gravedad). Sobrantes: MG995 (pan) +
-  S3003 (tilt) → **pan-tilt del OAK**, + 3× S3003 repuesto. Descartado stepper
-  en yaw: peso (NEMA17 ~280 g), homing necesario y holding current en batería.
-- **Compras pendientes**: PCA9685 (I2C 0x40, convive con ESP32 en 0x11),
-  UBEC 12V→6V 8-10A (picos MG996R ~2.5A c/u; JAMÁS del 5V de la Pi),
-  2 kits brackets aluminio servo estándar, 2× MG996R (tienda >4.7, ojo fakes).
-- **Software**: nodo `arm_controller` (patrón del motor driver), URDF de brazos,
-  IK planar 2 eslabones, pipeline OAK (posición 3D en metros) → frame del brazo
-  → agarre. Meta final: datasets de demostraciones + política con LeRobot.
-- Si algún día se quiere más músculo: RoArm-M2-S (combo oficial Waveshare,
-  base 163 mm ≈ toda la tapa, ~850 g, CG alto) o brazo en base fija de
-  escritorio colaborando con el rover vía ROS 2. Decisión pospuesta a que
-  los brazos baratos enseñen qué se necesita de verdad.
+Brazos bimanuales:
+- ⛔ **SUPERADO (2026-07-07)**: el plan de brazos 3GDL con servos reciclados y el
+  CAD del brazo vishnu quedaron obsoletos. Decisión final: **2× brazo 6DOF de
+  aluminio ROT3U completo (ThanksBuyer, "Arm Only")** usando los 13× MG996R ya
+  comprados (compatibilidad 40×20/25T verificada), montados en el módulo **TORSO**
+  elevable (L16-140-63-6-R + rieles 8mm). Historia completa y decisiones D1-D4 en
+  `cad/MEDIDAS.md`; fases nuevas en el PLAN MARATÓN al final de este documento.
+- Sigue vigente de aquel plan: PCA9685 (I2C 0x40), 2× UBEC 8-10A (uno por brazo,
+  JAMÁS del 5V del host), meta LeRobot (datasets de demostración → política).
 
 ---
 
@@ -454,3 +456,124 @@ nocturnas: la odometría visual necesita luz — mitigar con focos IR/LED de IO4
 apoyarse más en lidar+IMU de noche); compatibilidad eléctrica del dock (nunca
 conectar 20 V de un dock Xiaomi directo al puerto de 12.6 V); seguridad de acceso
 remoto (solo vía VPN/tunnel autenticado).
+
+---
+
+## 🏁 PLAN MARATÓN (2026-07-07) — hoja de ruta oficial
+
+**La demo**: en un diorama de estantes, el robot reconoce objetos, los agarra
+(feedback visual de la cámara), navega esquivando obstáculos (cámara+lidar),
+los deposita en otro lugar, y cuando su batería baja se acopla SOLO a su dock,
+carga, sale y sigue — durante DÍAS, sin intervención humana. La métrica estrella
+es un contador público de repeticiones consecutivas sin fallo. Todo el cómputo
+(percepción, navegación, LLM del asistente de voz) corre embebido en la Jetson:
+**la prueba del avión ✈️ = WiFi apagado y el robot sigue completo.**
+
+**Las dos capas** (independientes, comparten cuerpo):
+- **Capa A — Manipulación embebida**: percibir → agarrar → navegar → depositar.
+  Alcanzable con objetos CONOCIDOS + visual servoing (absorbe la imprecisión de
+  MG996R y base skid-steer). NO se promete "objetos arbitrarios" — eso es
+  research-grade; escena controlada sigue siendo digno de tesis.
+- **Capa B — Asistente "Jarvis"**: wake word + Whisper (STT) + LLM local +
+  Piper (TTS) + herramientas estilo MCP (recordatorios, citas, pico y placa,
+  gimnasio, oficina). Madura, útil desde el día 1, motivación cuando A se atasque.
+  Si la tesis se valida: asistente personal de escritorio.
+
+### F0 · Sala de decisiones — ✅ CERRADA (2026-07-07, bitácora en cad/MEDIDAS.md)
+
+| # | Decisión | Veredicto |
+|---|----------|-----------|
+| D1 | Configuración módulo superior | **Torso elevable B directo**: sub-chasis fijo + torso ≤4kg que sube 140mm (L16-140-63-6-R, ya en mano). Rieles 8mm+LM8UU obligatorios |
+| D1b | LiDAR | **Fijo en el sub-chasis** (SLAM 2D exige altura constante) |
+| D2 | Cómputo | **Jetson Orin Nano Super 8GB SOLA**, migración por etapas; Pi 5 queda de repuesto caliente |
+| D3 | Energía | **Fuente única DeWalt 6Ah dentro del TORSO** (junto a Jetson, con separación térmica). Robot SIEMPRE vivo; en dock = modo espera. Dock pogo pins propio a 20.4V. UPS viejo fuera de cadena crítica. 2× UBEC (uno por brazo) |
+| D4 | Interfaz TORSO↔plataforma | **"4 tornillos M4 + XT30 12V + 1 USB serial JSON"**. Las plataformas se adaptan al TORSO |
+| D5 | PLAN.md | Esta sección |
+
+Reglas operativas que nacieron de F0 (invariantes del behavior tree):
+1. **Navegar con torso ABAJO** (vuelco θ≈18° vs 14° arriba); subir solo detenido.
+2. Ningún motor se mueve sin confirmación explícita de Andrés (regla de oro vigente).
+3. Masa elevada ≤4 kg (retención del L16 sin corriente = 46N).
+4. Carga a 20.4V (~85-90%), nunca 21V (packs de taladro no balancean).
+
+### Las 8 fases (formato: objetivo / aprenderás / decides / validación)
+
+**F1 · Cimientos en simulación** *(YA — no espera hardware)*
+Gemelo digital: rover + TORSO (junta prismática) + 2 brazos 6DOF en Gazebo,
+movidos por MoveIt2. Aprenderás: URDF/xacro, árbol TF, cinemática directa vs
+inversa (con MG996R hacemos IK, no dinámica inversa real — esa exige control de
+torque; el concepto se aprende en Gazebo, que sí simula dinámica), solvers IK
+(KDL vs TRAC-IK), ros2_control. Decides: geometría del torso, nombres de joints,
+solver. ✓: MoveIt2 lleva la garra a una pose objetivo en Gazebo.
+
+**F2 · Percepción** — OAK-D → YOLO on-device (VPU) + pose 3D del objeto → TF.
+Aprenderás: calibración intrínsecos/extrínsecos, nubes de puntos, por qué
+"reconocer" es fácil y "dónde está en 3D" es lo difícil. Decides: los 3-5
+objetos del diorama (tamaño garra, distintivos). ✓: RViz muestra el objeto
+como frame TF estable con el robot en movimiento.
+
+**F3 · Fusión cámara+lidar en Nav2** — depth del OAK a los costmaps (capa
+voxel/STVL): esquiva lo que el lidar no ve. Aprenderás: costmaps por capas,
+voxel grids. Decides: resolución/rango voxel (CPU vs detalle). ✓: caja baja
+invisible al lidar → la esquiva.
+
+**F4 · Brazos reales + visual servoing** *(al llegar brazos)* — PCA9685 (12
+servos + L16 como canal 13), calibración pulso→ángulo, y el corazón: la cámara
+ve garra y objeto y corrige en lazo cerrado. Aprenderás: calibración hand-eye,
+lazo cerrado vs abierto. Decides: AprilTag en garra vs detección directa.
+✓: pick 8/10 con la base en posiciones ligeramente distintas.
+
+**F5 · Migración a Jetson + asistente local** — todo el stack a la Orin Nano
+por etapas (1º OAK/percepción, 2º SLAM/Nav2, 3º base+web). LLM local cuantizado
++ Whisper + Piper + wake word + herramientas MCP. Aprenderás: cuantización
+INT4/FP16, presupuesto de 8GB compartidos (el LLM compite con YOLO y Nav2),
+TensorRT. Decides: tamaño del LLM (3B holgado vs 7B apretado) CON benchmark
+real. ✓: la prueba del avión.
+
+**F6 · Dock de carga con pogo pins** — diseño+fabricación: geometría de
+auto-alineación (embudo/rampa: la mecánica perdona lo que el software no logra)
++ AprilTag + `opennav_docking` (Nav2 oficial: se estudia, no se inventa).
+INA3221 confirma corriente de carga = acople exitoso; reintentos con retroceso.
+Aprenderás: electrónica de carga CC/CV, docking de precisión. Decides: ubicación
+del dock en el diorama. 🔴 No negociable: fusible, termistor, corte por
+sobre-temperatura, superficie ignífuga, protocolo validado ANTES de la maratón.
+✓: 10 dockings consecutivos sin intervención.
+
+**F7 · Orquestación + confiabilidad** — behavior tree (BehaviorTree.CPP, el
+motor interno de Nav2): patrullar → detectar → agarrar → transportar → depositar
+→ ¿batería? → dock → repetir. Watchdogs, políticas de reinicio Docker,
+recuperación ante fallo (3 reintentos → saltar y registrar), telemetría con
+dashboard (contador de repeticiones, éxitos/fallos, temperatura Jetson,
+corriente por servo). **El dashboard ES la demo.** Aprenderás: behavior trees
+vs máquinas de estado, diseño para fallo, observabilidad — lo más transferible
+a cualquier proyecto futuro. ✓: 24h en simulación/mesa sin cuidador.
+
+**F8 · La maratón** — runs incrementales 2h → 8h → 24h → 72h, análisis de cada
+fallo entre runs (cada fallo = lección documentada). Métrica: repeticiones
+consecutivas sin intervención humana, en contador gigante.
+
+### Riesgos propios de la maratón (además de los históricos)
+1. **Desgaste de MG996R**: miles de ciclos desgastan engranajes/potenciómetro.
+   Comprar 2-3 repuestos, monitorear corriente por servo como indicador, agarres
+   sin carga sostenida. La maratón es también un experimento de vida útil.
+   Upgrade no destructivo: DS3225 (25kg, mismo cuerpo/spline) en hombros.
+2. **Térmica de la Jetson**: LLM+visión+Nav2 por días = throttling sin flujo de
+   aire. El CAD del TORSO incluye ventilación y deflector (el exhaust no puede
+   bañar el pack de litio).
+3. **Presupuesto energético**: trabajo 38-45W ≈ 3h/carga; recarga ~2h → ritmo
+   3:2 ✓. Validar con INA3221 real ANTES de construir el dock.
+4. **Carga desatendida de litio = el riesgo #1 del proyecto** — ver F6.
+
+### Método de trabajo (anti-caja-negra, acordado)
+1. Mini-clase del concepto antes de tocar código.
+2. Opciones con trade-offs presentadas → **Andrés decide**.
+3. Código por capas pequeñas, legibles y cuestionables.
+4. Cada fase cierra con validación medible + entrada de bitácora (patrón ADR
+   de MEDIDAS.md extendido a todo el proyecto).
+
+### Dependencias y arranque
+F1→F4 (la sim valida antes del hierro) · F2→F3,F4 · F6→F8 · F7→F8 ·
+F5 es paralela (victoria motivacional). Pendiente de sesiones anteriores que
+sigue en cola: fusión gyro QMI8658→EKF (deuda de Fase 3, arregla derrape del
+mapa — victoria rápida en robot vivo). **Próximo paso: F1 (URDF del TORSO
+completo + Gazebo + MoveIt2), que no espera ningún paquete de AliExpress.**

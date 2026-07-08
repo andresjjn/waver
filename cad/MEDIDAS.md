@@ -363,3 +363,12 @@ F0 = cerrar decisiones de arquitectura ANTES del primer URDF. Bitácora:
   (θ≈18° vs 14° arriba) — invariante del behavior tree (F7).
 - Presupuesto: trabajo 38-45W → ~3h por carga (120Wh al 85% ≈ 100Wh);
   recarga ~2h → ritmo trabajo:carga ≈ 3:2 ✓ el ciclo de la maratón cierra.
+
+### ✅ D4 — Contrato TORSO↔plataforma: **"4 tornillos + XT30 + USB"** (aprobado)
+- Mecánica: patrón 4-6× M4 en placa base del TORSO; cada plataforma aporta
+  placa adaptadora. Las plataformas se adaptan al TORSO, nunca al revés.
+- Potencia: TORSO entrega 12V por **XT30** (15A cont.; motores rover pican 3A).
+- Datos: 1× USB Jetson↔ESP32, protocolo serial JSON actual sin cambios.
+- Software: el TORSO solo conoce cmd_vel + telemetría. Percepción, brazos,
+  LLM y dock viven en el TORSO. Portar = 4 tornillos + 2 cables + firmware
+  que hable el mismo JSON.
