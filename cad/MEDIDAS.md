@@ -361,21 +361,29 @@ F0 = cerrar decisiones de arquitectura ANTES del primer URDF. Bitácora:
 - Costo de CG aceptado: pack a ~17cm (−2° de vuelco vs bahía baja) a cambio
   de portabilidad total. Regla operativa: **navegar con torso ABAJO**
   (θ≈18° vs 14° arriba) — invariante del behavior tree (F7).
+- ⚠️ PACKS REALES (Andrés, confirmado 2026-07-08): **2× DeWalt DCB203-B3 =
+  20V MAX 2.0Ah cada uno ≈ 36Wh nominales** (5S1P 18650, 18V nom × 2Ah).
+  NO son 6Ah — la estimación previa de 120Wh estaba inflada 3×.
 - Presupuesto energético (estimado; MEDIR con INA3221 en F4 antes del dock):
   - Consumo del pack (con pérdidas buck+UBEC ~10-15%) por estado:
     standby brazos-sin-energía ~20W · navegando torso-abajo ~45W ·
-    manipulando detenido ~65W · **mezcla real de maratón ~45-50W**.
-  - Autonomía con 120Wh al 85% ≈ 100Wh útiles: standby ~5h ·
-    **trabajo activo ~2 a 2.2h** (corrige el "3h" optimista anterior).
+    manipulando detenido ~65W · **mezcla real de maratón ~47W**.
+  - Autonomía con UN DCB203 (36Wh al 85% ≈ 30Wh útiles): standby ~1.5h ·
+    **trabajo activo ~40 min** · manipulando ~28 min.
   - 🃏 Comodín = 12× MG996R: en pose compacta o depotenciados casi no gastan;
     sosteniendo torque pueden sumar 40-70W. Mitigación de diseño: NUNCA todo
     a la vez (navegar=motores sí/servos plegados; manipular=detenido) +
     depotenciar servos ociosos. Incertidumbre ±100% hasta medir.
-  - Ritmo: ~2h trabajo + ~2h carga ≈ 12 ciclos/día, ~50% de jornada activa.
-    Para la maratón importa el RATIO trabajo:carga, no la autonomía absoluta.
-  - Palanca si hace falta más (el pack va en sub-chasis bajo = lastre bueno,
-    no cuenta contra los ≤4kg del ascensor): DeWalt 9Ah (~180Wh→~3.3h) o
-    12Ah (~240Wh→~4.5h + mejor estabilidad), a costa de peso para los motores.
+  - RESCATE: un 2Ah recarga en ~40-45 min → ritmo ~40min trabajo : ~45min
+    carga ≈ **1:1**. La maratón NO se rompe; cambia a ciclos cortos y más
+    frecuentes → más repeticiones de docking (bueno para la métrica estrella).
+  - Opciones con los 2 packs: (1) 1 pack + docking frecuente (simple, hoy);
+    (2) 2 bahías uso SECUENCIAL con conmutador A/B → ~80 min (⛔ nunca en
+    paralelo directo: cross-charge entre packs, necesita aislamiento);
+    (3) para F8 comprar 1× DCB205 5Ah (~90Wh→~2h) o DCB206 6Ah (~108Wh→~2.4h),
+    mismo cargador/cuna, + lastre bajo. Los 2Ah quedan de banco/desarrollo.
+  - Plan: usar los 2×2Ah para F1-F4 y levantar el consumo REAL; decidir pack
+    de maratón con datos del INA3221, no con esta estimación.
 
 ### ✅ D4 — Contrato TORSO↔plataforma: **"4 tornillos + XT30 + USB"** (aprobado)
 - Mecánica: patrón 4-6× M4 en placa base del TORSO; cada plataforma aporta
