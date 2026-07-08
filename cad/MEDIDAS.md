@@ -268,3 +268,56 @@ comercial (compatible con repo hobby).
 | EEZYbotARM MK2 | [thing:1454048](https://www.thingiverse.com/thing:1454048) | Miles de makes; [librería Python IK](https://github.com/meisben/easyEEZYbotARM); ⚠️ CC BY-NC |
 | Bracket MG996R press-fit | [printables 11782](https://www.printables.com/model/11782-hobby-servo-holder-for-mg996r) | Referencia de portaservo para hombros |
 | Rover + brazo 6DOF | [makerworld 1342319](https://makerworld.com/en/models/1342319-rc-rover-with-robot-arm-6-dof) | Lo más parecido publicado — **no existe rover de brazos dobles: el CRAB sería original** |
+
+---
+
+## F0 · SALA DE DECISIONES — Plan Maratón (2026-07-07)
+
+Contexto: se definió el plan de 8 fases hacia la demo maratón (pick&place
+autónomo en diorama + carga autónoma + días corriendo sin intervención).
+F0 = cerrar decisiones de arquitectura ANTES del primer URDF. Bitácora:
+
+### ✅ D1 — Configuración del módulo superior: **B DIRECTO (torso elevable)**
+- Arquitectura "dos pisos" del módulo portable (mochila trasladable a
+  futuras plataformas: orugas, péndulo, cuadrúpedo):
+  - **Sub-chasis (NO sube)**: batería, Jetson, PCA9685, LiDAR, base de
+    columna + rieles. Lo pesado abajo, ventilación fácil.
+  - **Torso elevado (SÍ sube, presupuesto ≤4 kg)**: 2 brazos (~2 kg),
+    placa-torso, cámara OAK como "cara" (~2.5-3 kg total ✓).
+- Argumento decisivo: con MG996R los brazos DEBEN trabajar recogidos
+  (10 kg·cm ÷ 30 cm ≈ 330 g estirado ≈ nada). La cobertura vertical la da
+  la columna, no el estiramiento → cobertura fuerte 10-54 cm (vs 0-30 del
+  plano fijo) y servos fríos = vida útil para la maratón.
+- Se descartó "B por etapas" (placa plana primero): Andrés prefiere un solo
+  esfuerzo mecánico desde el inicio.
+- ⚠️ Riesgo #1 mecánico: paralelismo de rieles (binding). Mitigación:
+  varillas lisas 8mm + rodamientos LM8UU (estándar impresora 3D) + diseño
+  con ajuste de paralelismo.
+
+### ✅ D1b — LiDAR: **fijo en el sub-chasis** (no sube con el torso)
+- SLAM 2D exige altura de escaneo constante; si el LiDAR sube/baja el mapa
+  se corrompe. Sigue siendo parte del módulo portable.
+
+### 📐 L16 REAL confirmado: **Actuonix L16-140-63-6-R** (ya comprado)
+| Parámetro | Valor | Implicación |
+|---|---|---|
+| Carrera | 140 mm | banda de trabajo desplazable 14 cm |
+| Fuerza máx (63:1) | 100 N (~10 kg) | 3× margen p/ torso 3 kg |
+| Retención s/ corriente | **46 N (~4.6 kg)** | ⛔ masa elevada ≤4 kg (regla de diseño) |
+| Velocidad | 20 mm/s | carrera completa en 7 s |
+| Alimentación | **6 V** | mismo riel que los servos |
+| Interfaz "R" | **PWM RC 1-2 ms** | = servo #13 del PCA9685, cero electrónica extra |
+| Feedback | lazo interno, NO legible | software asume comandado=alcanzado tras t de viaje |
+| Duty cycle | 20% máx | ciclo demo ~2 min con 2 movs (14 s) ≈ 12% ✓ |
+
+### 🛒 Compras chicas para la columna (agregar al próximo pedido)
+- 2× varilla lisa acero 8 mm × ~250-300 mm (rectificada, tipo impresora 3D)
+- 4× rodamiento lineal LM8UU
+- 2× soporte SHF8 o SK8 (fijación de varilla)
+- Tornillería M3/M4 + tuercas nyloc
+
+### ⏳ Decisiones pendientes de F0
+- D2: reparto de cómputo Pi↔Jetson + mejoras de software que desbloquea
+- D3: energía del módulo (riel 6V p/ 12 servos + L16; batería módulo vs plataforma)
+- D4: interfaz módulo↔plataforma (contrato mecánico/eléctrico/datos)
+- D5: reestructura de PLAN.md con el plan de 8 fases
