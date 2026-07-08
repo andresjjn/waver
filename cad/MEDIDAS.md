@@ -372,3 +372,17 @@ F0 = cerrar decisiones de arquitectura ANTES del primer URDF. Bitácora:
 - Software: el TORSO solo conoce cmd_vel + telemetría. Percepción, brazos,
   LLM y dock viven en el TORSO. Portar = 4 tornillos + 2 cables + firmware
   que hable el mismo JSON.
+
+### 🔌 Pogo pins del dock — referencia confirmada (ya comprados)
+[item 1005009020459440](https://es.aliexpress.com/item/1005009020459440.html) —
+par magnético macho/hembra, **10A cont. / 24V** (cable 18A), coaxial, roscado
+p/ panel, contactos C3604 dorados, hembra estanca, imanes NdFeB. ~COP 36k.
+- ✓ Un solo par cubre los ~4.5A de carga+vigilancia (margen 2.2×). Sin paralelos.
+- ✓ Imán auto-asienta los últimos mm (AprilTag ±1cm → embudo ±3mm → imán) y
+  da desacople seguro + confirmación táctil de acople.
+- Reglas de diseño derivadas:
+  1. **Dock muerto por defecto**: energizar solo tras handshake de acople
+     (precarga limitada → plena). Lado robot: diodo ideal (pines nunca vivos).
+  2. **Montaje flotante lado dock** (1-2mm de juego) p/ que el imán alinee.
+  3. Verificar fuerza de despegue NdFeB vs tracción skid-steer en piso liso
+     al llegar; plan B: desacoplar con giro, no con tirón recto.
