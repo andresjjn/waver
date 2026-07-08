@@ -570,6 +570,9 @@ consecutivas sin intervención humana, en contador gigante.
 3. Código por capas pequeñas, legibles y cuestionables.
 4. Cada fase cierra con validación medible + entrada de bitácora (patrón ADR
    de MEDIDAS.md extendido a todo el proyecto).
+5. **Grabar SIEMPRE los hitos y los builds en video** (el material crudo es
+   irrecuperable) y actualizar la tabla de estado de `ROADMAP.md` al cerrar
+   cada fase.
 
 ### Dependencias y arranque
 F1→F4 (la sim valida antes del hierro) · F2→F3,F4 · F6→F8 · F7→F8 ·
