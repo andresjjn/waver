@@ -321,3 +321,19 @@ F0 = cerrar decisiones de arquitectura ANTES del primer URDF. Bitácora:
 - D3: energía del módulo (riel 6V p/ 12 servos + L16; batería módulo vs plataforma)
 - D4: interfaz módulo↔plataforma (contrato mecánico/eléctrico/datos)
 - D5: reestructura de PLAN.md con el plan de 8 fases
+
+### ✅ D2 — Cómputo: **Jetson Orin Nano Super 8GB SOLA, migración por etapas**
+- Regla que ordenó el debate: los topics RGB-D no viajan bien por red (cientos
+  de Mbps) → la percepción vive donde está enchufada la cámara → el OAK se
+  muda a la Jetson en cualquier escenario.
+- Destino: TODO en la Jetson (8GB unificada mata la saga del freeze de la Pi;
+  DDS en localhost; 1 solo punto de falla para la maratón; 7/15/25W config.).
+- Ejecución: Jetson se configura en la mesa (fuente de pared), migración
+  servicio por servicio (1º OAK/percepción, 2º SLAM/Nav2, 3º base+web) con la
+  Pi operando. Al final la Pi queda de REPUESTO CALIENTE o libre.
+- Desbloqueos: Isaac ROS (cuVSLAM, nvblox, AprilTag GPU), YOLO en GPU o en
+  VPU del OAK (liberando GPU p/ LLM local + Whisper + Piper).
+- Sub-decisión diferida a F5 con benchmark real: tamaño del LLM (3B holgado
+  vs 7B apretado) según presupuesto de los 8GB compartidos.
+- JetPack 6 = Ubuntu 22.04 = ROS2 Humble nativo ✓; I2C PCA9685 en header 40
+  pines ✓; Docker arm64 portable ✓.
