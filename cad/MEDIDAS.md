@@ -337,3 +337,29 @@ F0 = cerrar decisiones de arquitectura ANTES del primer URDF. Bitácora:
   vs 7B apretado) según presupuesto de los 8GB compartidos.
 - JetPack 6 = Ubuntu 22.04 = ROS2 Humble nativo ✓; I2C PCA9685 en header 40
   pines ✓; Docker arm64 portable ✓.
+
+### ✅ D3 — Energía: **fuente única DeWalt DENTRO del módulo "TORSO"** (arquitectura de Andrés)
+- Nombre oficial del módulo: **TORSO** = de la Jetson hacia arriba, atornillado
+  al rover, batería incluida. Autocontenido de verdad.
+- Pack DeWalt 6Ah en el sub-chasis, junto a la Jetson (⚠️ regla térmica CAD:
+  pack AL LADO al mismo nivel, o encima con 3-4cm + deflector — el exhaust de
+  la Orin no puede bañar el litio 24/7).
+- **El robot vive siempre**: Jetson nunca se apaga. En dock = modo espera
+  (0 servos, 0 motores, 0 L16) hasta batería llena. Espera ≈ 8-12W.
+- Dock propio con **pogo pins (ya comprados)**: entrega carga + vigilancia.
+  Fuente dock ~100W. Cargar a **20.4V (≈85-90%)**, no 21V: packs de taladro
+  no balancean; menos estrés = muchos más ciclos p/ la maratón.
+  ⚠️ verificar rating de corriente de los pogo pins (típ. 1-3A c/u → 3-4
+  pines en paralelo por polo). Fusible + termistor lado robot; INA3221
+  confirma corriente de carga real como señal de acople exitoso.
+- Bus de carga = bus del pack → cero microcortes en acople/desacople.
+  El buffer (UPS) resulta innecesario.
+- **UPS 3S viejo: fuera de la cadena crítica.** Se retira si el peso molesta
+  (eran 150g de lastre gratis, nada más). Rover recibe 12V desde el TORSO.
+- Riel 6V: 2× UBEC 8-10A, **uno por brazo** (aislamiento de brownout);
+  L16 (650mA) cuelga del UBEC menos cargado.
+- Costo de CG aceptado: pack a ~17cm (−2° de vuelco vs bahía baja) a cambio
+  de portabilidad total. Regla operativa: **navegar con torso ABAJO**
+  (θ≈18° vs 14° arriba) — invariante del behavior tree (F7).
+- Presupuesto: trabajo 38-45W → ~3h por carga (120Wh al 85% ≈ 100Wh);
+  recarga ~2h → ritmo trabajo:carga ≈ 3:2 ✓ el ciclo de la maratón cierra.
