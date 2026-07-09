@@ -35,22 +35,32 @@ Además: `torso_lift_joint` **prismática** (Actuonix L16-140: 0–0.14 m,
 son estimadas de las fotos del manual. Al llegar el kit se miden con
 calibrador y se corrigen las propiedades UNA vez.
 
-## Cómo visualizarlo (reusa la imagen de ROS2_Docker_UI)
+## Cómo verlo — RViz EN EL NAVEGADOR (ruta validada 2026-07-09 ✅)
+
+Usa la imagen VNC arm64 que ya está en la máquina (`tiryoh/ros2-desktop-vnc`):
 
 ```bash
-cd ROS2_Docker_UI && ./scripts/build   # si aún no existe la imagen
+docker run -d --name waver_twin_vnc -p 6080:80 --shm-size=512m \
+  -v "/Users/andresjjn/Projects/Robotics/Waver/ROS2_Docker_twin/ros2_ws:/ros2_ws" \
+  tiryoh/ros2-desktop-vnc:humble
 
-docker run -it --rm \
-  -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix \
-  -v "$(pwd)/../ROS2_Docker_twin/ros2_ws:/ros2_ws" \
-  ros2_ui_image bash -c \
-  "cd /ros2_ws && colcon build --symlink-install && source install/setup.bash && \
-   ros2 launch waver_arm_description display.launch.py"
+# dentro del contenedor (una sola vez por contenedor):
+docker exec waver_twin_vnc bash -c "apt-get update -qq && \
+  apt-get install -y -qq ros-humble-xacro ros-humble-joint-state-publisher-gui"
+docker exec waver_twin_vnc bash -c "source /opt/ros/humble/setup.bash && \
+  cd /ros2_ws && colcon build --symlink-install"
+
+# lanzar el display COMO USUARIO ubuntu (el dueño del escritorio X):
+docker exec -d -u ubuntu waver_twin_vnc bash -c "export DISPLAY=:1 HOME=/home/ubuntu && \
+  source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash && \
+  ros2 launch waver_arm_description display.launch.py"
 ```
 
+Abrir **http://localhost:6080/vnc.html?autoconnect=true&resize=scale** →
+RViz + sliders. Sube `torso_lift_joint` a 0.140 y mira la columna extenderse.
 Con `model:=arm_standalone.urdf.xacro` se ve un solo brazo en pedestal.
-Mueve los sliders del `joint_state_publisher_gui`; el dedo derecho es mimic
-del izquierdo (la garra de engranajes se espeja sola).
+Gotchas encontrados: lanzar como root falla (X auth del usuario ubuntu);
+montar SIEMPRE con ruta absoluta (cwd relativo creó un dir espurio).
 
 ## Validación sin ROS (en la Mac pelada)
 

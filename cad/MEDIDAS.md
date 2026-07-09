@@ -467,3 +467,13 @@ Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
   imagen vieja sin xacro → vendor PyPI por PYTHONPATH.
 - Pendiente F1 (sesión con Andrés): RViz/Gazebo con ventana (mini-clase),
   MoveIt2 bringup, decidir KDL vs TRAC-IK, grabar short 🎬.
+
+### F1 · Gemelo VISIBLE en RViz vía navegador ✅ (2026-07-09, verificado con Chrome)
+- Contenedor `waver_twin_vnc` (tiryoh/ros2-desktop-vnc:humble, arm64 nativo)
+  con el workspace montado → RViz + joint_state_publisher_gui en
+  **http://localhost:6080** (noVNC). Sin X11, sin instalar nada en la Mac.
+- Verificado moviendo sliders desde el navegador: torso_lift a 0.140 (columna
+  extendida en pantalla), hombro 0.671, codo 1.112 → el CRAB responde.
+- Gotchas: display debe lanzarse `-u ubuntu` con DISPLAY=:1 (X auth);
+  mounts con ruta ABSOLUTA (un $(pwd) relativo creó un dir espurio).
+- El contenedor queda corriendo para la sesión de Andrés (grabar short 🎬).
