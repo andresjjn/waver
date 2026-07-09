@@ -52,7 +52,7 @@ compact poses mean low sustained torque, which means servos that last.
 | Phase | What | Status |
 |-------|------|--------|
 | F0 | Architecture decisions (torso, compute, power, interfaces) | ✅ Closed |
-| F1 | Digital twin: full URDF + Gazebo + MoveIt2, before any hardware | 🔜 Next |
+| F1 | Digital twin: full URDF + Gazebo + MoveIt2, before any hardware | 🚧 In progress (URDF done: 15 joints, validated) |
 | F2 | Perception: on-device object detection + 3D pose as TF frames | Planned |
 | F3 | Camera + LiDAR fusion in Nav2 costmaps (dodge what LiDAR can't see) | Planned |
 | F4 | Real arms + visual servoing: camera closes the loop on the grasp | Waiting on hardware |

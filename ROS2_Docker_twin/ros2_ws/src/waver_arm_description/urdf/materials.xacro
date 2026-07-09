@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Paleta del gemelo digital WAVER CRAB -->
+  <material name="aluminio">
+    <color rgba="0.78 0.78 0.80 1.0"/>
+  </material>
+  <material name="servo_rojo">
+    <color rgba="0.75 0.12 0.12 1.0"/>
+  </material>
+  <material name="negro_mate">
+    <color rgba="0.15 0.15 0.15 1.0"/>
+  </material>
+  <material name="gris_oscuro">
+    <color rgba="0.35 0.35 0.38 1.0"/>
+  </material>
+  <material name="teal_waver">
+    <color rgba="0.11 0.62 0.46 1.0"/>
+  </material>
+  <material name="purpura_l16">
+    <color rgba="0.50 0.47 0.87 1.0"/>
+  </material>
+</robot>

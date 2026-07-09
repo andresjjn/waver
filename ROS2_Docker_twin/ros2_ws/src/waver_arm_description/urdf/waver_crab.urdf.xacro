@@ -1,0 +1,221 @@
+<?xml version="1.0"?>
+<!--
+  WAVER CRAB — gemelo digital completo (F1 del PLAN MARATÓN)
+  Plataforma (Wave Rover) + módulo TORSO de dos pisos:
+    sub-chasis fijo (batería DeWalt + Jetson + LiDAR + base de columna)
+    + junta PRISMÁTICA torso_lift (Actuonix L16-140: carrera 0 a 0.14 m)
+    + placa-torso con 2 brazos 6DOF a ±45° y cámara OAK como "cara".
+
+  Decisiones F0 codificadas aquí (cad/MEDIDAS.md):
+    D1  torso elevable "B directo", masa elevada <= 4 kg
+    D1b LiDAR fijo en el sub-chasis (NO sube con el torso)
+    D4  el TORSO se ancla a la plataforma por un solo joint fijo (4 tornillos)
+
+  Dimensiones de plataforma tomadas de waver_description (chasis 194x110x55,
+  ruedas r=0.030). Las del TORSO son [calibrar] hasta cerrar el CAD (#9).
+-->
+<robot name="waver_crab" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find waver_arm_description)/urdf/materials.xacro"/>
+  <xacro:include filename="$(find waver_arm_description)/urdf/arm_6dof.xacro"/>
+
+  <!-- ============ plataforma (rover) ============ -->
+  <xacro:property name="chasis_lx" value="0.194"/>
+  <xacro:property name="chasis_ly" value="0.110"/>
+  <xacro:property name="chasis_lz" value="0.055"/>
+  <xacro:property name="clearance" value="0.025"/>
+  <xacro:property name="wheel_r"   value="0.030"/>
+  <xacro:property name="wheel_w"   value="0.025"/>
+  <xacro:property name="wheel_x"   value="0.055"/>
+  <xacro:property name="wheel_y"   value="${chasis_ly/2 + wheel_w/2 + 0.002}"/>
+
+  <!-- ============ TORSO [calibrar] ============ -->
+  <xacro:property name="sub_lx"      value="0.170"/>  <!-- sub-chasis -->
+  <xacro:property name="sub_ly"      value="0.110"/>
+  <xacro:property name="sub_lz"      value="0.070"/>  <!-- pack DeWalt + Jetson -->
+  <xacro:property name="col_h"       value="0.200"/>  <!-- columna + rieles 8mm -->
+  <xacro:property name="lift_stroke" value="0.140"/>  <!-- carrera L16-140 -->
+  <xacro:property name="plate_lx"    value="0.180"/>  <!-- placa-torso -->
+  <xacro:property name="plate_ly"    value="0.150"/>
+  <xacro:property name="plate_lz"    value="0.008"/>
+  <xacro:property name="arm_x"       value="0.035"/>  <!-- hombros sobre la placa -->
+  <xacro:property name="arm_y"       value="0.058"/>
+  <xacro:property name="arm_yaw"     value="${pi/4}"/> <!-- ±45° -->
+  <xacro:property name="lidar_r"     value="0.019"/>
+  <xacro:property name="lidar_h"     value="0.032"/>
+
+  <xacro:macro name="inercia_caja_root" params="m x y z">
+    <inertial>
+      <mass value="${m}"/>
+      <inertia ixx="${m*(y*y+z*z)/12.0}" iyy="${m*(x*x+z*z)/12.0}"
+               izz="${m*(x*x+y*y)/12.0}" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </xacro:macro>
+
+  <!-- suelo -> centro del chasis -->
+  <link name="base_footprint"/>
+  <joint name="base_footprint_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 ${clearance + chasis_lz/2}"/>
+  </joint>
+
+  <link name="base_link">
+    <visual>
+      <geometry><box size="${chasis_lx} ${chasis_ly} ${chasis_lz}"/></geometry>
+      <material name="negro_mate"/>
+    </visual>
+    <collision>
+      <geometry><box size="${chasis_lx} ${chasis_ly} ${chasis_lz}"/></geometry>
+    </collision>
+    <xacro:inercia_caja_root m="1.6" x="${chasis_lx}" y="${chasis_ly}" z="${chasis_lz}"/>
+  </link>
+
+  <!-- 4 ruedas (fijas: sin encoders, igual que waver_description) -->
+  <xacro:macro name="rueda" params="nombre x y">
+    <joint name="${nombre}_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="${nombre}_link"/>
+      <origin xyz="${x} ${y} ${wheel_r - clearance - chasis_lz/2}" rpy="${-pi/2} 0 0"/>
+    </joint>
+    <link name="${nombre}_link">
+      <visual>
+        <geometry><cylinder radius="${wheel_r}" length="${wheel_w}"/></geometry>
+        <material name="gris_oscuro"/>
+      </visual>
+      <collision>
+        <geometry><cylinder radius="${wheel_r}" length="${wheel_w}"/></geometry>
+      </collision>
+      <inertial>
+        <mass value="0.05"/>
+        <inertia ixx="1e-5" iyy="1e-5" izz="1e-5" ixy="0" ixz="0" iyz="0"/>
+      </inertial>
+    </link>
+  </xacro:macro>
+  <xacro:rueda nombre="wheel_fl" x="${wheel_x}"  y="${wheel_y}"/>
+  <xacro:rueda nombre="wheel_fr" x="${wheel_x}"  y="${-wheel_y}"/>
+  <xacro:rueda nombre="wheel_rl" x="${-wheel_x}" y="${wheel_y}"/>
+  <xacro:rueda nombre="wheel_rr" x="${-wheel_x}" y="${-wheel_y}"/>
+
+  <!-- ============ TORSO piso 1: sub-chasis (D4: un joint fijo = 4 tornillos) ============ -->
+  <joint name="torso_mount_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="subchassis_link"/>
+    <origin xyz="0 0 ${chasis_lz/2}"/>
+  </joint>
+
+  <link name="subchassis_link">
+    <!-- caja: pack DeWalt + Jetson + PCA9685 -->
+    <visual>
+      <origin xyz="0 0 ${sub_lz/2}"/>
+      <geometry><box size="${sub_lx} ${sub_ly} ${sub_lz}"/></geometry>
+      <material name="teal_waver"/>
+    </visual>
+    <!-- columna del L16 + rieles (sube desde el sub-chasis) -->
+    <visual>
+      <origin xyz="${-sub_lx/2 + 0.015} 0 ${sub_lz + col_h/2}"/>
+      <geometry><box size="0.025 0.060 ${col_h}"/></geometry>
+      <material name="purpura_l16"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 ${sub_lz/2}"/>
+      <geometry><box size="${sub_lx} ${sub_ly} ${sub_lz}"/></geometry>
+    </collision>
+    <collision>
+      <origin xyz="${-sub_lx/2 + 0.015} 0 ${sub_lz + col_h/2}"/>
+      <geometry><box size="0.025 0.060 ${col_h}"/></geometry>
+    </collision>
+    <!-- pack 1.0 kg + Jetson 0.4 + estructura 0.6 -->
+    <xacro:inercia_caja_root m="2.0" x="${sub_lx}" y="${sub_ly}" z="${sub_lz}"/>
+  </link>
+
+  <!-- LiDAR fijo en el sub-chasis (decisión D1b: altura de escaneo constante) -->
+  <joint name="laser_joint" type="fixed">
+    <parent link="subchassis_link"/>
+    <child link="laser_frame"/>
+    <origin xyz="0.045 0 ${sub_lz + lidar_h/2}"/>
+  </joint>
+  <link name="laser_frame">
+    <visual>
+      <geometry><cylinder radius="${lidar_r}" length="${lidar_h}"/></geometry>
+      <material name="negro_mate"/>
+    </visual>
+    <collision>
+      <geometry><cylinder radius="${lidar_r}" length="${lidar_h}"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.05"/>
+      <inertia ixx="1e-5" iyy="1e-5" izz="1e-5" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+
+  <!-- ============ LA junta estrella: torso_lift (Actuonix L16-140-63-6-R) ============ -->
+  <!-- Regla D3/D1: masa elevada <= 4 kg (retención 46 N sin corriente).
+       Velocidad real 20 mm/s; esfuerzo 100 N máx (63:1). -->
+  <joint name="torso_lift_joint" type="prismatic">
+    <parent link="subchassis_link"/>
+    <child link="torso_plate_link"/>
+    <origin xyz="0 0 ${sub_lz + 0.075}"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="0.0" upper="${lift_stroke}" effort="100.0" velocity="0.020"/>
+  </joint>
+
+  <link name="torso_plate_link">
+    <visual>
+      <origin xyz="0 0 ${plate_lz/2}"/>
+      <geometry><box size="${plate_lx} ${plate_ly} ${plate_lz}"/></geometry>
+      <material name="aluminio"/>
+    </visual>
+    <collision>
+      <origin xyz="0 0 ${plate_lz/2}"/>
+      <geometry><box size="${plate_lx} ${plate_ly} ${plate_lz}"/></geometry>
+    </collision>
+    <xacro:inercia_caja_root m="0.45" x="${plate_lx}" y="${plate_ly}" z="0.02"/>
+  </link>
+
+  <!-- cámara OAK-D Lite = la "cara" (sube con el torso, mira al frente) -->
+  <joint name="oak_joint" type="fixed">
+    <parent link="torso_plate_link"/>
+    <child link="oak_link"/>
+    <origin xyz="${plate_lx/2 - 0.010} 0 ${plate_lz + 0.055}"/>
+  </joint>
+  <link name="oak_link">
+    <visual>
+      <geometry><box size="0.0175 0.091 0.028"/></geometry>
+      <material name="negro_mate"/>
+    </visual>
+    <collision>
+      <geometry><box size="0.0175 0.091 0.028"/></geometry>
+    </collision>
+    <inertial>
+      <mass value="0.061"/>
+      <inertia ixx="1e-5" iyy="1e-5" izz="1e-5" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+  <!-- cuello de la cara -->
+  <joint name="neck_joint" type="fixed">
+    <parent link="torso_plate_link"/>
+    <child link="neck_link"/>
+    <origin xyz="${plate_lx/2 - 0.010} 0 ${plate_lz + 0.020}"/>
+  </joint>
+  <link name="neck_link">
+    <visual>
+      <geometry><cylinder radius="0.008" length="0.040"/></geometry>
+      <material name="gris_oscuro"/>
+    </visual>
+    <inertial>
+      <mass value="0.02"/>
+      <inertia ixx="1e-6" iyy="1e-6" izz="1e-6" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+
+  <!-- ============ los dos brazos a ±45° (hombros del CRAB) ============ -->
+  <xacro:waver_arm prefix="left_arm_" parent="torso_plate_link">
+    <origin xyz="${arm_x} ${arm_y} ${plate_lz}" rpy="0 0 ${arm_yaw}"/>
+  </xacro:waver_arm>
+
+  <xacro:waver_arm prefix="right_arm_" parent="torso_plate_link">
+    <origin xyz="${arm_x} ${-arm_y} ${plate_lz}" rpy="0 0 ${-arm_yaw}"/>
+  </xacro:waver_arm>
+
+</robot>

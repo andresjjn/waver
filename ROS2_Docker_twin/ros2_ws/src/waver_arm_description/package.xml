@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>waver_arm_description</name>
+  <version>0.1.0</version>
+  <description>
+    URDF/xacro del gemelo digital WAVER CRAB: brazo 6DOF de aluminio (macro
+    parametrizada), módulo TORSO con junta prismática (Actuonix L16-140) y
+    ensamble completo rover + torso + 2 brazos a ±45°. Fase F1 del PLAN MARATÓN.
+  </description>
+  <maintainer email="andresjt93@gmail.com">Andres Jejen</maintainer>
+  <license>MIT</license>
+
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>joint_state_publisher_gui</exec_depend>
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>rviz2</exec_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

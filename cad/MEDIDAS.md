@@ -407,3 +407,39 @@ p/ panel, contactos C3604 dorados, hembra estanca, imanes NdFeB. ~COP 36k.
   2. **Montaje flotante lado dock** (1-2mm de juego) p/ que el imán alinee.
   3. Verificar fuerza de despegue NdFeB vs tracción skid-steer en piso liso
      al llegar; plan B: desacoplar con giro, no con tirón recto.
+
+---
+
+## Manual del brazo 6DOF (kit Red Sun Global / ThanksBuyer) — 2026-07-09
+
+PDF de 30 páginas digerido (guía fotográfica de ensamblaje). Hallazgos:
+- **Cadena cinemática confirmada** (pág. 28): A=yaw base sobre RODAMIENTO
+  grande · B=hombro · C=codo (bloque de 2 servos espalda con espalda,
+  pág. 15) · D=muñeca pitch · E=muñeca roll · F=garra de ENGRANAJES
+  (dedos dentados espejados, pág. 22-26).
+- Servos del kit: "25KG 180°, PWM 0.5-2.5ms, DC 4.8-8.4V" — mismo formato
+  40×20/25T que MG996R ✓ (los nuestros entran directo).
+- Joints con **rodamiento M4X12 en el lado libre** (pág. 14/16/19) — el eje
+  no carga solo sobre el spline del servo. Buen diseño, menos juego.
+- Electrónica del kit (Arduino NANO + expansión + Bluetooth + buck LM2596):
+  NO se usa (nosotros: PCA9685 desde Jetson). Queda de repuesto.
+- Servos A-F van a pines 4-9 del Nano en el diseño original (referencia
+  para el orden de canales en el PCA9685: A=ch0...F=ch5 por brazo).
+
+## F1 · Gemelo digital — AVANCE 2026-07-09 (sesión autónoma)
+
+Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
+- `arm_6dof.xacro`: macro parametrizada del brazo (pose vela, REP-103),
+  6 revolutas + garra con mimic, límites ±90° (servo 180°), effort 1.0 N·m
+  (MG996R), rodamientos del manual reflejados en ejes Y.
+- `waver_crab.urdf.xacro`: rover (194×110×55) + sub-chasis (batería+Jetson+
+  LiDAR fijo D1b) + **torso_lift_joint prismática** (L16: 0-0.14m, 100N,
+  0.02m/s) + placa-torso + 2 brazos a ±45° + OAK como cara.
+- Validado sin ROS (pip xacro + urdf-parser-py): ambos modelos ✅.
+  CRAB: 29 links, 28 joints (15 móviles), masa modelada 6.26 kg;
+  **masa elevada 2.4 kg ≤ 4 kg** (regla D3 ✓); alcance hombro→punta 385mm.
+- Geometría del brazo [calibrar] (estimada de fotos, medir al llegar):
+  base 95×95×62 · disco+horquilla 57 · hombro→codo 120 · codo→muñeca 90 ·
+  muñeca 55 · base garra 45 · dedo 75 (mm).
+- Pendiente F1: Gazebo+ros2_control, MoveIt2 (SRDF, TRAC-IK), nodo
+  waver_arm con PCA9685 mock.

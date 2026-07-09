@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+  Un solo brazo 6DOF sobre pedestal — para estudiar/calibrar el brazo aislado
+  (igual que quedará montado en la mesa cuando llegue el kit).
+  Uso: display.launch.py model:=arm_standalone.urdf.xacro
+-->
+<robot name="waver_arm_standalone" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find waver_arm_description)/urdf/materials.xacro"/>
+  <xacro:include filename="$(find waver_arm_description)/urdf/arm_6dof.xacro"/>
+
+  <link name="world"/>
+
+  <xacro:waver_arm prefix="arm_" parent="world">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:waver_arm>
+
+</robot>
