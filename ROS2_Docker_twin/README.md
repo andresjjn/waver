@@ -65,3 +65,11 @@ masa elevada 2.4 kg ≤ 4 kg regla D3 ✓).
 2. MoveIt2: SRDF + grupos `left_arm`/`right_arm` + IK (TRAC-IK).
 3. Nodo `waver_arm` con driver PCA9685 **mock** (regla de oro: ningún
    motor real sin confirmación explícita).
+
+## Verificación FK (pose cero)
+
+![Esqueleto FK](media/crab_fk_skeleton.png)
+
+Cinemática directa calculada del URDF: brazos simétricos (y = ±0.058),
+`tool0` sube 0.737 → 0.877 m con el L16 extendido (+140 mm exactos) y el
+LiDAR permanece a z = 0.166 en ambas poses (decisión D1b ✓).
