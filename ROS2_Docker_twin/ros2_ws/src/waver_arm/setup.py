@@ -3,7 +3,7 @@ from glob import glob
 
 from setuptools import setup
 
-package_name = 'waver_arm_description'
+package_name = 'waver_arm'
 
 setup(
     name=package_name,
@@ -13,17 +13,18 @@ setup(
         ('share/ament_index/resource_index/packages',
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
-        (os.path.join('share', package_name, 'urdf'), glob('urdf/*.xacro')),
         (os.path.join('share', package_name, 'launch'), glob('launch/*.launch.py')),
-        (os.path.join('share', package_name, 'rviz'), glob('rviz/*.rviz')),
         (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
-        (os.path.join('share', package_name, 'srdf'), glob('srdf/*.srdf')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='Andres Jejen',
     maintainer_email='andresjt93@gmail.com',
-    description='URDF del gemelo digital WAVER CRAB (brazo 6DOF + torso L16)',
+    description='Controlador PCA9685 (mock/real) de brazos + torso del CRAB',
     license='MIT',
-    entry_points={'console_scripts': []},
+    entry_points={
+        'console_scripts': [
+            'arm_controller = waver_arm.arm_controller_node:main',
+        ],
+    },
 )

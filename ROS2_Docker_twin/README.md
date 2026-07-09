@@ -59,12 +59,49 @@ procesa los xacro y verifica árbol/nombres/límites. Última corrida:
 ambos modelos ✅ (CRAB: 29 links, 28 joints, 15 móviles, 6.26 kg;
 masa elevada 2.4 kg ≤ 4 kg regla D3 ✓).
 
-## Próximos pasos de F1
+## F1b — capa de control (2026-07-09)
 
-1. Gazebo: `<gazebo>` tags + `ros2_control` (posición por joint).
-2. MoveIt2: SRDF + grupos `left_arm`/`right_arm` + IK (TRAC-IK).
-3. Nodo `waver_arm` con driver PCA9685 **mock** (regla de oro: ningún
-   motor real sin confirmación explícita).
+```
+ros2_ws/src/
+├── waver_arm_description/
+│   ├── urdf/control.xacro            # ros2_control + plugin gazebo_ros2_control
+│   ├── urdf/waver_crab_sim.urdf.xacro # CRAB + capa de control (para Gazebo)
+│   ├── config/controllers.yaml       # JTC por brazo + torso + grippers
+│   ├── config/kinematics.yaml        # IK (KDL; TRAC-IK = 1 línea de cambio)
+│   └── srdf/waver_crab.srdf          # grupos MoveIt2, poses candle/compact
+└── waver_arm/                        # el nodo de control real/mock
+    ├── waver_arm/servo_map.py        # joint→canal PCA9685 + ángulo→pulso (PURO)
+    ├── waver_arm/pca9685_backend.py  # Mock (default) / Real (exige ARMADO)
+    ├── waver_arm/arm_controller_node.py  # rampa segura + /joint_states
+    └── test/test_servo_map.py        # 19 tests (incluye la regla de oro)
+```
+
+Mapa de canales PCA9685: brazo izq A-F = 0-5, brazo der A-F = 6-11,
+L16 torso = 12. Grupos MoveIt2: `left_arm`/`right_arm` (5 joints) +
+`*_gripper` + `*_arm_with_torso` (el ascensor como GDL vertical extra).
+
+**Regla de oro codificada**: el nodo arranca en MOCK y DESARMADO;
+`RealPca9685(armed=False)` lanza `PermissionError`. Armar = servicio
+`/waver_arm/arm` (SetBool) + parámetro `use_mock:=false`, siempre con
+confirmación explícita de Andrés.
+
+## Smoke test (contenedor waver_twin)
+
+```bash
+cd ROS2_Docker_twin && docker build -t waver_twin .
+docker run --rm -v "$(pwd)/ros2_ws:/ros2_ws" -v "$(pwd)/scripts:/scripts" \
+  waver_twin bash /scripts/smoke_test.sh
+```
+
+Valida: colcon build, 19 unit tests, xacro de los 3 modelos, y un E2E:
+el nodo mock recibe "torso a 0.14" y TF confirma que `left_arm_tool0`
+sube de z=0.737 a z=0.877 respetando los 20 mm/s del L16 (~7 s).
+
+## Pendiente F1 (con Andrés)
+
+1. Ver el CRAB en RViz (X11) y grabar el primer short 🎬.
+2. Gazebo con física + MoveIt2 demo (mini-clase ros2_control + IK).
+3. Decidir KDL vs TRAC-IK con pruebas reales.
 
 ## Verificación FK (pose cero)
 

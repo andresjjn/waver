@@ -443,3 +443,27 @@ Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
   muñeca 55 · base garra 45 · dedo 75 (mm).
 - Pendiente F1: Gazebo+ros2_control, MoveIt2 (SRDF, TRAC-IK), nodo
   waver_arm con PCA9685 mock.
+
+## F1b · Capa de control del gemelo — AVANCE 2026-07-09 (goal: sigue con f1)
+
+- **`waver_arm`** (paquete nuevo): `servo_map.py` (joint→canal PCA9685:
+  izq A-F=0-5, der A-F=6-11, L16=12; ángulo→pulso 500-2500µs/±90°;
+  L16 1000-2000µs/0-140mm; rampa de seguridad por joint) + backends
+  Mock/Real (Real SIN armar lanza PermissionError — regla de oro codificada)
+  + nodo `arm_controller` (rampa 50Hz, /waver_arm/command, /joint_states,
+  servicio /waver_arm/arm).
+- **19 pruebas unitarias** (mapeo, saturación, canales únicos, mimic sin
+  canal, rampa L16=7.0s carrera, regla de oro) — pasan en Mac y en ROS.
+- **ros2_control**: control.xacro (posición por joint, mimic de dedos) +
+  waver_crab_sim.urdf.xacro + controllers.yaml (JTC por brazo + torso con
+  constraint 0.02m/s + grippers).
+- **MoveIt2**: SRDF (grupos left/right_arm, *_with_torso, poses candle/
+  compact/open/closed, colisiones adyacentes) + kinematics.yaml (KDL,
+  TRAC-IK a 1 línea).
+- **SMOKE TEST E2E EN DOCKER ✅** (osrf/ros:humble-desktop, scripts/
+  smoke_test.sh): colcon build + 19 tests + xacro 3 modelos + robot_state_
+  publisher + nodo mock → comando torso 0.14m → **TF midió +140.0mm** en
+  ~7s. Trampas resueltas: URDF por --params-file (por -p CLI rompe rcl);
+  imagen vieja sin xacro → vendor PyPI por PYTHONPATH.
+- Pendiente F1 (sesión con Andrés): RViz/Gazebo con ventana (mini-clase),
+  MoveIt2 bringup, decidir KDL vs TRAC-IK, grabar short 🎬.

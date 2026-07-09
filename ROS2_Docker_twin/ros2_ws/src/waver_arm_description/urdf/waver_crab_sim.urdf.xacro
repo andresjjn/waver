@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!--
+  WAVER CRAB para SIMULACIÓN (Gazebo classic + ros2_control).
+  = waver_crab.urdf.xacro + capa de control. Para RViz puro usa el otro.
+-->
+<robot name="waver_crab" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:include filename="$(find waver_arm_description)/urdf/waver_crab.urdf.xacro"/>
+  <xacro:include filename="$(find waver_arm_description)/urdf/control.xacro"/>
+  <xacro:crab_ros2_control/>
+</robot>

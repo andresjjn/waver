@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<!--
+  SRDF del WAVER CRAB para MoveIt2 — Fase F1b.
+  Define QUÉ es un "brazo" para el planificador: cadenas cinemáticas,
+  efectores, poses nombradas y qué pares de links no chequear por colisión.
+-->
+<robot name="waver_crab">
+
+  <!-- ==== grupos de planificación ==== -->
+  <group name="left_arm">
+    <chain base_link="torso_plate_link" tip_link="left_arm_tool0"/>
+  </group>
+  <group name="right_arm">
+    <chain base_link="torso_plate_link" tip_link="right_arm_tool0"/>
+  </group>
+  <group name="left_gripper">
+    <joint name="left_arm_finger_l_joint"/>
+    <joint name="left_arm_finger_r_joint"/>
+  </group>
+  <group name="right_gripper">
+    <joint name="right_arm_finger_l_joint"/>
+    <joint name="right_arm_finger_r_joint"/>
+  </group>
+  <!-- torso + brazo: para planes que usan el ascensor como 6º GDL vertical -->
+  <group name="left_arm_with_torso">
+    <joint name="torso_lift_joint"/>
+    <group name="left_arm"/>
+  </group>
+  <group name="right_arm_with_torso">
+    <joint name="torso_lift_joint"/>
+    <group name="right_arm"/>
+  </group>
+
+  <!-- ==== efectores ==== -->
+  <end_effector name="left_hand" parent_link="left_arm_tool0" group="left_gripper"/>
+  <end_effector name="right_hand" parent_link="right_arm_tool0" group="right_gripper"/>
+
+  <!-- ==== poses nombradas ==== -->
+  <group_state name="candle" group="left_arm">
+    <joint name="left_arm_yaw_joint" value="0"/>
+    <joint name="left_arm_shoulder_joint" value="0"/>
+    <joint name="left_arm_elbow_joint" value="0"/>
+    <joint name="left_arm_wrist_pitch_joint" value="0"/>
+    <joint name="left_arm_wrist_roll_joint" value="0"/>
+  </group_state>
+  <group_state name="candle" group="right_arm">
+    <joint name="right_arm_yaw_joint" value="0"/>
+    <joint name="right_arm_shoulder_joint" value="0"/>
+    <joint name="right_arm_elbow_joint" value="0"/>
+    <joint name="right_arm_wrist_pitch_joint" value="0"/>
+    <joint name="right_arm_wrist_roll_joint" value="0"/>
+  </group_state>
+  <!-- "compacta": la postura fuerte de trabajo (regla de torque MG996R) -->
+  <group_state name="compact" group="left_arm">
+    <joint name="left_arm_yaw_joint" value="0"/>
+    <joint name="left_arm_shoulder_joint" value="0.6"/>
+    <joint name="left_arm_elbow_joint" value="-1.2"/>
+    <joint name="left_arm_wrist_pitch_joint" value="0.6"/>
+    <joint name="left_arm_wrist_roll_joint" value="0"/>
+  </group_state>
+  <group_state name="compact" group="right_arm">
+    <joint name="right_arm_yaw_joint" value="0"/>
+    <joint name="right_arm_shoulder_joint" value="0.6"/>
+    <joint name="right_arm_elbow_joint" value="-1.2"/>
+    <joint name="right_arm_wrist_pitch_joint" value="0.6"/>
+    <joint name="right_arm_wrist_roll_joint" value="0"/>
+  </group_state>
+  <group_state name="open" group="left_gripper">
+    <joint name="left_arm_finger_l_joint" value="0.8"/>
+  </group_state>
+  <group_state name="closed" group="left_gripper">
+    <joint name="left_arm_finger_l_joint" value="0.0"/>
+  </group_state>
+  <group_state name="open" group="right_gripper">
+    <joint name="right_arm_finger_l_joint" value="0.8"/>
+  </group_state>
+  <group_state name="closed" group="right_gripper">
+    <joint name="right_arm_finger_l_joint" value="0.0"/>
+  </group_state>
+
+  <!-- ==== mimic (engranaje de la garra) ==== -->
+  <passive_joint name="left_arm_finger_r_joint"/>
+  <passive_joint name="right_arm_finger_r_joint"/>
+
+  <!-- ==== colisiones deshabilitadas (adyacentes / nunca chocan) ====
+       generado a mano; el Setup Assistant de MoveIt puede refinarlo -->
+  <disable_collisions link1="base_link" link2="subchassis_link" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="wheel_fl_link" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="wheel_fr_link" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="wheel_rl_link" reason="Adjacent"/>
+  <disable_collisions link1="base_link" link2="wheel_rr_link" reason="Adjacent"/>
+  <disable_collisions link1="subchassis_link" link2="laser_frame" reason="Adjacent"/>
+  <disable_collisions link1="subchassis_link" link2="torso_plate_link" reason="Adjacent"/>
+  <disable_collisions link1="torso_plate_link" link2="oak_link" reason="Adjacent"/>
+  <disable_collisions link1="torso_plate_link" link2="neck_link" reason="Adjacent"/>
+  <disable_collisions link1="oak_link" link2="neck_link" reason="Adjacent"/>
+  <disable_collisions link1="torso_plate_link" link2="left_arm_base_link" reason="Adjacent"/>
+  <disable_collisions link1="torso_plate_link" link2="right_arm_base_link" reason="Adjacent"/>
+  <disable_collisions link1="left_arm_base_link" link2="left_arm_turntable_link" reason="Adjacent"/>
+  <disable_collisions link1="left_arm_turntable_link" link2="left_arm_upper_arm_link" reason="Adjacent"/>
+  <disable_collisions link1="left_arm_upper_arm_link" link2="left_arm_forearm_link" reason="Adjacent"/>
+  <disable_collisions link1="left_arm_forearm_link" link2="left_arm_wrist_link" reason="Adjacent"/>
+  <disable_collisions link1="left_arm_wrist_link" link2="left_arm_gripper_base_link" reason="Adjacent"/>
+  <disable_collisions link1="left_arm_gripper_base_link" link2="left_arm_finger_l_link" reason="Adjacent"/>
+  <disable_collisions link1="left_arm_gripper_base_link" link2="left_arm_finger_r_link" reason="Adjacent"/>
+  <disable_collisions link1="left_arm_finger_l_link" link2="left_arm_finger_r_link" reason="Adjacent"/>
+  <disable_collisions link1="right_arm_base_link" link2="right_arm_turntable_link" reason="Adjacent"/>
+  <disable_collisions link1="right_arm_turntable_link" link2="right_arm_upper_arm_link" reason="Adjacent"/>
+  <disable_collisions link1="right_arm_upper_arm_link" link2="right_arm_forearm_link" reason="Adjacent"/>
+  <disable_collisions link1="right_arm_forearm_link" link2="right_arm_wrist_link" reason="Adjacent"/>
+  <disable_collisions link1="right_arm_wrist_link" link2="right_arm_gripper_base_link" reason="Adjacent"/>
+  <disable_collisions link1="right_arm_gripper_base_link" link2="right_arm_finger_l_link" reason="Adjacent"/>
+  <disable_collisions link1="right_arm_gripper_base_link" link2="right_arm_finger_r_link" reason="Adjacent"/>
+  <disable_collisions link1="right_arm_finger_l_link" link2="right_arm_finger_r_link" reason="Adjacent"/>
+  <disable_collisions link1="left_arm_base_link" link2="right_arm_base_link" reason="Never"/>
+</robot>
