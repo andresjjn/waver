@@ -542,3 +542,21 @@ Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
 - Verificado y NO afectado: mapeo 12 servos de brazos (discovery de
   Andrés lo re-confirmó esta noche: muñeca responde), inversión del
   L16 medida y codificada, riel 6V vivo.
+
+### F4 · RESUELTO: el L16 estaba ACUÑADO contra su tope ✅ (2026-07-22 ~23:00)
+- Causa raíz de la "sordera" del L16: los comandos de retraer sostenidos
+  8 s con el vástago YA retraído acuñaron el husillo contra el tope
+  interno. Síntomas: retraer = silencio, extender = amagos sin salir.
+  Ni batería nueva ni cambio de canal lo curaban.
+- Liberación: comando de extender + tracción manual suave del vástago
+  ("la mano rompe el acuñamiento"). Después respondió a posiciones
+  absolutas de nuevo (verificado: casi-afuera → casi-adentro → media
+  carrera, terminando exacto en 70 mm).
+- REGLAS NUEVAS codificadas en servo_map.py (22 tests verdes):
+  · L16 vive en el CANAL 3 (el 0 queda de repuesto, bajo sospecha).
+  · LÍMITES SUAVES: saturación a 5-135 mm (1964-1036 us). Ningún
+    comando puede volver a sostenerlo contra un tope físico.
+- Los cables I2C nuevos dejaron el bus estable el resto de la sesión.
+- Cierre real de la noche: 13 canales mapeados y verificados con
+  potencia, brazos + columna vertebral respondiendo, y 4 lecciones de
+  hardware que el gemelo digital jamás nos habría enseñado.

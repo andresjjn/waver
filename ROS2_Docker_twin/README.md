@@ -89,10 +89,12 @@ ros2_ws/src/
 Mapa de canales PCA9685 (CABLEADO REAL 2026-07-22, garra primero,
 de externo a interno): brazo derecho 15→10 (garra, muñeca roll,
 muñeca pitch "codo 2", codo "codo 1", hombro, base yaw), brazo
-izquierdo 9→4 en el mismo orden, L16 torso = canal 0 ✅ VERIFICADO
-con potencia (2026-07-22, burst 60ms servo a servo). Canales 1-3 de
-repuesto. ⚠️ El L16 de Andrés tiene la convención INVERTIDA (medido):
-2.0 ms = retraído, 1.0 ms = extendido — ya codificado en servo_map.
+izquierdo 9→4 en el mismo orden, L16 torso = canal 3 ✅ VERIFICADO
+con potencia (2026-07-22). Canales 0-2 de repuesto (el 0 bajo
+sospecha). ⚠️ El L16 de Andrés tiene la convención INVERTIDA (medido):
+2.0 ms = retraído, 1.0 ms = extendido — codificado en servo_map con
+LÍMITES SUAVES a 5 mm de los topes: sostener comando contra el tope
+acuña el husillo (pasó y hubo que liberarlo a mano).
 Grupos MoveIt2: `left_arm`/`right_arm` (5 joints) +
 `*_gripper` + `*_arm_with_torso` (el ascensor como GDL vertical extra).
 

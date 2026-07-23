@@ -69,12 +69,15 @@ SERVO_MAP: dict[str, ServoSpec] = {
     'left_arm_elbow_joint':       _arm_servo(6),     # "codo 1"
     'left_arm_shoulder_joint':    _arm_servo(5),
     'left_arm_yaw_joint':         _arm_servo(4),
-    # torso: L16-140 en canal 0 (VERIFICADO con potencia 2026-07-22).
-    # Unidad con convención INVERTIDA (medido, no datasheet):
-    # 2000 us = retraído (0.0 m), 1000 us = extendido (0.14 m).
-    # min_us > max_us es intencional: command_to_us interpola igual.
-    # Canales 1-3 quedan de repuesto.
-    'torso_lift_joint': ServoSpec(0, 2000.0, 1000.0, 0.0, 0.14, 0.020),
+    # torso: L16-140 en canal 3 (VERIFICADO con potencia 2026-07-22).
+    # Unidad con convención INVERTIDA (medido): 2000 us = retraído,
+    # 1000 us = extendido. min_us > max_us es intencional.
+    # LÍMITES SUAVES a 5 mm de cada tope: sostener comando contra el
+    # tope ACUÑA el husillo (pasó; se liberó a mano). La física exacta
+    # sigue siendo 2000/1000 us = 0/140 mm; los anchors del spec son
+    # los us de 5 y 135 mm para que la saturación jamás toque un tope.
+    # Canales 0-2 de repuesto (el 0 quedó bajo sospecha, sin confirmar).
+    'torso_lift_joint': ServoSpec(3, 1964.3, 1035.7, 0.005, 0.135, 0.020),
 }
 
 # Los dedos derechos son mimic (engranajes): NO tienen canal propio.

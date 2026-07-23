@@ -41,15 +41,17 @@ class TestMapeoServo180:
 class TestL16Torso:
     """Actuonix L16-140-63-6-R: 0-140 mm. Unidad de Andrés INVERTIDA
     (verificado con potencia 2026-07-22): 2.0 ms = retraído, 1.0 ms =
-    extendido. El 8s de "retraer" que lo sacó completo fue la prueba."""
+    extendido. Con LÍMITES SUAVES a 5 mm de cada tope: sostener el
+    comando contra un tope acuñó el husillo (rescatado a mano)."""
 
-    def test_retraido(self):
+    def test_retraido_satura_en_limite_suave(self):
+        # pedir 0.0 debe quedarse a 5 mm del tope (1964 us), nunca 2000
         spec = SERVO_MAP['torso_lift_joint']
-        assert spec.command_to_us(0.0) == pytest.approx(2000.0)
+        assert spec.command_to_us(0.0) == pytest.approx(1964.3, abs=0.1)
 
-    def test_extendido(self):
+    def test_extendido_satura_en_limite_suave(self):
         spec = SERVO_MAP['torso_lift_joint']
-        assert spec.command_to_us(0.14) == pytest.approx(1000.0)
+        assert spec.command_to_us(0.14) == pytest.approx(1035.7, abs=0.1)
 
     def test_mitad_de_carrera(self):
         spec = SERVO_MAP['torso_lift_joint']
@@ -72,12 +74,13 @@ class TestCanales:
 
     def test_cableado_real_2026_07_22(self):
         """Contrato con el cableado físico de Andrés: derecho 15..10
-        (garra primero), izquierdo 9..4, L16 provisional en 0."""
+        (garra primero), izquierdo 9..4, L16 en el canal 3 (verificado
+        con potencia; el 0 quedó bajo sospecha)."""
         assert SERVO_MAP['right_arm_finger_l_joint'].channel == 15
         assert SERVO_MAP['right_arm_yaw_joint'].channel == 10
         assert SERVO_MAP['left_arm_finger_l_joint'].channel == 9
         assert SERVO_MAP['left_arm_yaw_joint'].channel == 4
-        assert SERVO_MAP['torso_lift_joint'].channel == 0
+        assert SERVO_MAP['torso_lift_joint'].channel == 3
         # "codo 2" del cableado = wrist_pitch del URDF, canal contiguo al codo
         assert (SERVO_MAP['right_arm_wrist_pitch_joint'].channel
                 == SERVO_MAP['right_arm_elbow_joint'].channel + 1)
