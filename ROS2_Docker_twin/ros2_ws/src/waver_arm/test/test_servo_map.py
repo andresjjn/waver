@@ -39,15 +39,17 @@ class TestMapeoServo180:
 
 
 class TestL16Torso:
-    """Actuonix L16-140-63-6-R: 0-140 mm sobre 1.0-2.0 ms."""
+    """Actuonix L16-140-63-6-R: 0-140 mm. Unidad de Andrés INVERTIDA
+    (verificado con potencia 2026-07-22): 2.0 ms = retraído, 1.0 ms =
+    extendido. El 8s de "retraer" que lo sacó completo fue la prueba."""
 
     def test_retraido(self):
         spec = SERVO_MAP['torso_lift_joint']
-        assert spec.command_to_us(0.0) == pytest.approx(1000.0)
+        assert spec.command_to_us(0.0) == pytest.approx(2000.0)
 
     def test_extendido(self):
         spec = SERVO_MAP['torso_lift_joint']
-        assert spec.command_to_us(0.14) == pytest.approx(2000.0)
+        assert spec.command_to_us(0.14) == pytest.approx(1000.0)
 
     def test_mitad_de_carrera(self):
         spec = SERVO_MAP['torso_lift_joint']

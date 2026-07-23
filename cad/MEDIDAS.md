@@ -505,3 +505,26 @@ Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
 - Pendiente de medición con calibrador (para des-[calibrar] el xacro):
   8 longitudes por brazo + peso por brazo (regla D3 ≤4 kg elevados) +
   patrón de tornillos de la base (para la placa-torso de Onshape).
+
+### F4 · Primer encendido REAL de los brazos + mapeo verificado ✅ (2026-07-22)
+- I2C Pi5↔PCA9685 verificado (`i2cdetect` → 0x40) y cadena completa
+  validada SIN potencia primero: 50 Hz exactos, eco de registros de los
+  13 canales, salidas en FULL_OFF antes de conectar batería.
+- Potencia: LiPo 2S del Alpha 1S → interruptor+fusible → UBEC 6V → borne
+  V+. NUNCA la LiPo directa (8.4V llena > 7.2V máx del MG996R).
+- Descubrimiento canal por canal con bursts de 60 ms (mínimo movimiento,
+  servos sin calibrar): los 12 canales de brazos coinciden con el mapa
+  der 15→10 / izq 9→4.
+- **L16 en canal 0 con convención INVERTIDA (dato medido, no datasheet):
+  2.0 ms = retraído, 1.0 ms = extendido.** Descubierto porque el comando
+  "retraer" de 8 s lo extendió por completo. Corregido en servo_map.py
+  (min_us > max_us intencional) + tests.
+- Lecciones de fiabilidad (adelanto de F7):
+  · Conector flojo = fallas raras (servos "fantasma" al energizar, bus
+    I2C caído a mitad de sesión con Errno 121). Arnés definitivo del
+    TORSO: JST con seguro para I2C y retén de silicona en conectores
+    de servo.
+  · Backend real ahora reintenta transacciones I2C (3 intentos): un
+    glitch aislado no tumba el nodo. 22 tests.
+  · MG996R clones dan "power-on twitch" al energizar V+: conectar
+    siempre con brazos en pose compacta apoyada.
