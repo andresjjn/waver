@@ -528,3 +528,17 @@ Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
     glitch aislado no tumba el nodo. 22 tests.
   · MG996R clones dan "power-on twitch" al energizar V+: conectar
     siempre con brazos en pose compacta apoyada.
+
+### F4 · PENDIENTE ABIERTO al cierre de sesión (2026-07-22 ~22:15)
+- **Bus I2C Pi↔PCA9685 aleteando**: 4 caídas en la sesión (Errno 121),
+  la última sin recuperación (20 reintentos). Correlaciona con
+  manipulación/vibración → dupont roto por dentro o soldadura fría del
+  header del clon. ACCIÓN: 4 cables nuevos y cortos; si persiste,
+  repasar soldaduras. El watch de i2cdetect + golpecitos es el test.
+- **L16 dejó de responder tras su primer ciclo exitoso** (sí extendió
+  y retrajo con el bus sano). Pendiente con bus estable: barrido de
+  canales 0-3 y prueba de intercambio (servo suelto en la posición
+  del ch0). Sesión cerró con LiPo apagada por seguridad.
+- Verificado y NO afectado: mapeo 12 servos de brazos (discovery de
+  Andrés lo re-confirmó esta noche: muñeca responde), inversión del
+  L16 medida y codificada, riel 6V vivo.
