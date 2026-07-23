@@ -63,9 +63,21 @@ class TestCanales:
         assert len(canales) == len(set(canales))
 
     def test_13_canales_pca9685(self):
-        """12 servos de brazo + L16 = 13 canales (0-12), caben en 16."""
+        """12 servos de brazo + L16 = 13 canales, caben en 16."""
         assert len(SERVO_MAP) == 13
         assert all(0 <= s.channel <= 15 for s in SERVO_MAP.values())
+
+    def test_cableado_real_2026_07_22(self):
+        """Contrato con el cableado físico de Andrés: derecho 15..10
+        (garra primero), izquierdo 9..4, L16 provisional en 0."""
+        assert SERVO_MAP['right_arm_finger_l_joint'].channel == 15
+        assert SERVO_MAP['right_arm_yaw_joint'].channel == 10
+        assert SERVO_MAP['left_arm_finger_l_joint'].channel == 9
+        assert SERVO_MAP['left_arm_yaw_joint'].channel == 4
+        assert SERVO_MAP['torso_lift_joint'].channel == 0
+        # "codo 2" del cableado = wrist_pitch del URDF, canal contiguo al codo
+        assert (SERVO_MAP['right_arm_wrist_pitch_joint'].channel
+                == SERVO_MAP['right_arm_elbow_joint'].channel + 1)
 
     def test_mimic_sin_canal(self):
         """Los dedos derechos son engranaje: no deben tener canal PWM."""

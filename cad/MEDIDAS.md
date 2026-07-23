@@ -477,3 +477,31 @@ Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
 - Gotchas: display debe lanzarse `-u ubuntu` con DISPLAY=:1 (X auth);
   mounts con ruta ABSOLUTA (un $(pwd) relativo creó un dir espurio).
 - El contenedor queda corriendo para la sesión de Andrés (grabar short 🎬).
+
+### F4 · ¡LLEGARON LOS BRAZOS! Ensamble + cableado real (2026-07-22)
+- Ambos brazos 6DOF ensamblados por Andrés (garra de engranajes incluida).
+  Servos instalados: **MG996R** (no los "25KG" del manual) → la regla de
+  poses compactas (10 kg·cm ÷ 30 cm ≈ 330 g útiles) queda CONFIRMADA.
+- Cadena real por brazo (nomenclatura de Andrés → URDF): rotación de
+  hombro = yaw A, elevación = shoulder B, codo 1 = elbow C, codo 2 =
+  **wrist_pitch D** (cabeceo de muñeca, mismo sentido que el codo),
+  rotación de muñeca = wrist_roll E, pinza = garra F. 6 servos
+  independientes por brazo — NO hay bloque doble espejado.
+- **Cableado al PCA9685** (garra primero, de externo a interno,
+  canales descendiendo): derecho 15→10, izquierdo 9→4, L16 = canal 0
+  [por conectar], 1-3 de repuesto. ⚠️ Placa sin serigrafía: el "arranca
+  en 15" sale de la imagen del vendedor → **verificar en primer
+  encendido** (un servo a la vez, 1500 µs, corriente limitada).
+  `servo_map.py` + 20 tests actualizados al cableado real.
+- Placa PCA9685 montada entre hombros, con condensador en V+ y borne
+  verde libre → alimentar con 6V del UBEC, cable ≥16 AWG, JAMÁS por USB.
+  Riel V+ compartido por 12 MG996R: medir pico real con INA3221 (F4)
+  y decidir si se refuerza.
+- Placa del rover (General Driver): los 4 conectores 2P en uso son
+  motor-sin-encoder, pero la placa TRAE 2 puertos PH2.0 6P con entrada
+  de encoder (MA1/AC1/AC2/3V3/GND/MA2 y espejo B). Upgrade futuro (F3+):
+  2 motores con encoder Hall (1 por lado, verificar encaje mecánico),
+  ISR de cuadratura en ESP32 → odometría de ruedas al EKF.
+- Pendiente de medición con calibrador (para des-[calibrar] el xacro):
+  8 longitudes por brazo + peso por brazo (regla D3 ≤4 kg elevados) +
+  patrón de tornillos de la base (para la placa-torso de Onshape).

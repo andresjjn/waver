@@ -6,8 +6,13 @@ Fuentes de verdad:
 - Manual del kit: servos "180°, PWM 0.5-2.5 ms" (formato MG996R).
 - Actuonix L16-140-63-6-R: servo RC lineal, 1.0 ms = retraído, 2.0 ms =
   extendido (carrera 140 mm), interfaz idéntica a un servo.
-- Orden de canales heredado del manual (servos A-F = pines 4-9 del Nano
-  original) -> aquí A-F = canales consecutivos por brazo.
+- CABLEADO REAL de Andrés (2026-07-22): canales descendiendo desde el 15,
+  brazo derecho primero, de externo a interno: garra F, muñeca roll E,
+  "codo 2" = muñeca pitch D, "codo 1" = codo C, elevación = hombro B,
+  rotación = base yaw A. Luego el izquierdo en el mismo orden (9..4).
+  6 servos por brazo, todos independientes (sin pares espejados).
+  [verificar en primer encendido]: la placa no trae serigrafía; el
+  arranque en 15 sale de la imagen del vendedor.
 """
 from dataclasses import dataclass
 
@@ -50,22 +55,23 @@ def _gripper_servo(ch: int) -> ServoSpec:
 
 
 SERVO_MAP: dict[str, ServoSpec] = {
-    # brazo izquierdo: A-F = canales 0-5
-    'left_arm_yaw_joint':         _arm_servo(0),
-    'left_arm_shoulder_joint':    _arm_servo(1),
-    'left_arm_elbow_joint':       _arm_servo(2),
-    'left_arm_wrist_pitch_joint': _arm_servo(3),
-    'left_arm_wrist_roll_joint':  _arm_servo(4),
-    'left_arm_finger_l_joint':    _gripper_servo(5),
-    # brazo derecho: A-F = canales 6-11
-    'right_arm_yaw_joint':         _arm_servo(6),
-    'right_arm_shoulder_joint':    _arm_servo(7),
-    'right_arm_elbow_joint':       _arm_servo(8),
-    'right_arm_wrist_pitch_joint': _arm_servo(9),
-    'right_arm_wrist_roll_joint':  _arm_servo(10),
-    'right_arm_finger_l_joint':    _gripper_servo(11),
+    # brazo derecho: canales 15..10 (garra primero, cableado real)
+    'right_arm_finger_l_joint':    _gripper_servo(15),
+    'right_arm_wrist_roll_joint':  _arm_servo(14),
+    'right_arm_wrist_pitch_joint': _arm_servo(13),   # "codo 2"
+    'right_arm_elbow_joint':       _arm_servo(12),   # "codo 1"
+    'right_arm_shoulder_joint':    _arm_servo(11),
+    'right_arm_yaw_joint':         _arm_servo(10),
+    # brazo izquierdo: canales 9..4 (mismo orden)
+    'left_arm_finger_l_joint':    _gripper_servo(9),
+    'left_arm_wrist_roll_joint':  _arm_servo(8),
+    'left_arm_wrist_pitch_joint': _arm_servo(7),     # "codo 2"
+    'left_arm_elbow_joint':       _arm_servo(6),     # "codo 1"
+    'left_arm_shoulder_joint':    _arm_servo(5),
+    'left_arm_yaw_joint':         _arm_servo(4),
     # torso: L16-140 (0-0.14 m sobre 1.0-2.0 ms), 20 mm/s máx real
-    'torso_lift_joint': ServoSpec(12, 1000.0, 2000.0, 0.0, 0.14, 0.020),
+    # [por conectar] canal 0 provisional; 1-3 quedan de repuesto
+    'torso_lift_joint': ServoSpec(0, 1000.0, 2000.0, 0.0, 0.14, 0.020),
 }
 
 # Los dedos derechos son mimic (engranajes): NO tienen canal propio.

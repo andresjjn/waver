@@ -86,8 +86,14 @@ ros2_ws/src/
     └── test/test_servo_map.py        # 19 tests (incluye la regla de oro)
 ```
 
-Mapa de canales PCA9685: brazo izq A-F = 0-5, brazo der A-F = 6-11,
-L16 torso = 12. Grupos MoveIt2: `left_arm`/`right_arm` (5 joints) +
+Mapa de canales PCA9685 (CABLEADO REAL 2026-07-22, garra primero,
+de externo a interno): brazo derecho 15→10 (garra, muñeca roll,
+muñeca pitch "codo 2", codo "codo 1", hombro, base yaw), brazo
+izquierdo 9→4 en el mismo orden, L16 torso = canal 0 [por conectar].
+Canales 1-3 de repuesto. ⚠️ La placa no trae serigrafía: el arranque
+en 15 sale de la imagen del vendedor — verificar en el primer
+encendido (protocolo: un servo a la vez, 1500 µs, corriente limitada).
+Grupos MoveIt2: `left_arm`/`right_arm` (5 joints) +
 `*_gripper` + `*_arm_with_torso` (el ascensor como GDL vertical extra).
 
 **Regla de oro codificada**: el nodo arranca en MOCK y DESARMADO;
