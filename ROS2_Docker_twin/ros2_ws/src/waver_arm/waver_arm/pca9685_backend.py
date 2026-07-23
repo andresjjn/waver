@@ -5,9 +5,26 @@ REGLA DE ORO DEL PROYECTO, codificada:
 El backend real NUNCA emite pulsos si no se armó explícitamente
 (servicio /waver_arm/arm). El mock siempre es seguro: solo registra.
 """
+import time
 from abc import ABC, abstractmethod
 
 from .servo_map import PCA9685_FREQ_HZ, ServoSpec
+
+
+def retry_i2c(fn, tries: int = 3, wait_s: float = 0.005):
+    """Reintenta una transacción I2C ante OSError transitorio.
+
+    Visto en hardware (2026-07-22): el pico de corriente de un servo
+    puede rebotar la tierra y corromper UNA transacción (Errno 121)
+    sin resetear el chip. Un reintento milisegundos después funciona.
+    """
+    for intento in range(tries):
+        try:
+            return fn()
+        except OSError:
+            if intento == tries - 1:
+                raise
+            time.sleep(wait_s)
 
 
 class Pca9685Backend(ABC):
@@ -60,10 +77,13 @@ class RealPca9685(Pca9685Backend):
     def write(self, spec: ServoSpec, position: float) -> float:
         us = spec.command_to_us(position)
         # duty_cycle del driver adafruit es de 16 bits
-        self._pca.channels[spec.channel].duty_cycle = int(
-            us / (1_000_000.0 / PCA9685_FREQ_HZ) * 0xFFFF)
+        duty16 = int(us / (1_000_000.0 / PCA9685_FREQ_HZ) * 0xFFFF)
+
+        def _tx():
+            self._pca.channels[spec.channel].duty_cycle = duty16
+        retry_i2c(_tx)
         return us
 
     def disable_all(self) -> None:
         for ch in self._pca.channels:
-            ch.duty_cycle = 0
+            retry_i2c(lambda c=ch: setattr(c, 'duty_cycle', 0))

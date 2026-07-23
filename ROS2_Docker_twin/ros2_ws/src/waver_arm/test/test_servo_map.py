@@ -7,7 +7,8 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from waver_arm.pca9685_backend import MockPca9685, RealPca9685  # noqa: E402
+from waver_arm.pca9685_backend import (  # noqa: E402
+    MockPca9685, RealPca9685, retry_i2c)
 from waver_arm.servo_map import (  # noqa: E402
     MIMIC_JOINTS, SERVO_MAP, rate_limit)
 
@@ -128,3 +129,26 @@ class TestReglaDeOro:
         mock.write(SERVO_MAP['torso_lift_joint'], 0.07)
         mock.disable_all()
         assert mock.last_us == {} and mock.enabled is False
+
+
+class TestReintentoI2C:
+    """Errno 121 transitorio (visto 2026-07-22) no debe tumbar el nodo."""
+
+    def test_recupera_tras_fallo_transitorio(self):
+        intentos = []
+
+        def tx():
+            intentos.append(1)
+            if len(intentos) < 2:
+                raise OSError(121, 'Remote I/O error')
+            return 'ok'
+
+        assert retry_i2c(tx, wait_s=0.0) == 'ok'
+        assert len(intentos) == 2
+
+    def test_relanza_si_el_fallo_persiste(self):
+        def tx():
+            raise OSError(121, 'Remote I/O error')
+
+        with pytest.raises(OSError):
+            retry_i2c(tx, tries=3, wait_s=0.0)
