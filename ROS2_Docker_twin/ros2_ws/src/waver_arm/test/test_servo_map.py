@@ -10,7 +10,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from waver_arm.pca9685_backend import (  # noqa: E402
     MockPca9685, RealPca9685, retry_i2c)
 from waver_arm.servo_map import (  # noqa: E402
-    MIMIC_JOINTS, SERVO_MAP, rate_limit)
+    MIMIC_JOINTS, RELEASE_WHEN_SETTLED, SERVO_MAP, rate_limit)
 
 HALF_PI = math.pi / 2
 
@@ -134,6 +134,23 @@ class TestReglaDeOro:
         mock.write(SERVO_MAP['torso_lift_joint'], 0.07)
         mock.disable_all()
         assert mock.last_us == {} and mock.enabled is False
+
+
+class TestReleaseAutoblocante:
+    """El L16 suelta señal al asentarse; los servos de brazo JAMÁS."""
+
+    def test_solo_el_torso_libera(self):
+        assert RELEASE_WHEN_SETTLED == {'torso_lift_joint'}
+
+    def test_release_corta_el_canal_y_write_lo_revive(self):
+        mock = MockPca9685()
+        spec = SERVO_MAP['torso_lift_joint']
+        mock.write(spec, 0.07)
+        mock.release(spec.channel)
+        assert spec.channel in mock.released
+        assert spec.channel not in mock.last_us
+        mock.write(spec, 0.10)
+        assert spec.channel not in mock.released
 
 
 class TestReintentoI2C:

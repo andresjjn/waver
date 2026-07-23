@@ -18,7 +18,8 @@ from sensor_msgs.msg import JointState
 from std_srvs.srv import SetBool
 
 from .pca9685_backend import MockPca9685, RealPca9685
-from .servo_map import MIMIC_JOINTS, SERVO_MAP, rate_limit
+from .servo_map import (
+    MIMIC_JOINTS, RELEASE_WHEN_SETTLED, SERVO_MAP, SETTLE_S, rate_limit)
 
 RATE_HZ = 50.0
 
@@ -40,6 +41,8 @@ class ArmController(Node):
         # estado: posición actual y objetivo por joint (arranque en cero)
         self.current = {name: 0.0 for name in SERVO_MAP}
         self.target = dict(self.current)
+        # tiempo asentado en el objetivo (para soltar joints autoblocantes)
+        self.settled_s = {name: 0.0 for name in RELEASE_WHEN_SETTLED}
 
         self.create_subscription(JointState, 'waver_arm/command', self._on_command, 10)
         self.pub_js = self.create_publisher(JointState, 'joint_states', 10)
@@ -68,7 +71,19 @@ class ArmController(Node):
         for name, spec in SERVO_MAP.items():
             self.current[name] = rate_limit(
                 self.current[name], self.target[name], spec.max_rate, dt)
-            self.backend.write(spec, self.current[name])
+            if name in RELEASE_WHEN_SETTLED:
+                # L16: husillo autoblocante — al asentarse, señal fuera.
+                # Sostener PWM contra un tope acuña el husillo (2026-07-22).
+                if self.current[name] == self.target[name]:
+                    self.settled_s[name] += dt
+                else:
+                    self.settled_s[name] = 0.0
+                if self.settled_s[name] >= SETTLE_S:
+                    self.backend.release(spec.channel)
+                else:
+                    self.backend.write(spec, self.current[name])
+            else:
+                self.backend.write(spec, self.current[name])
             names.append(name)
             positions.append(self.current[name])
         # dedos espejo (engranaje físico)

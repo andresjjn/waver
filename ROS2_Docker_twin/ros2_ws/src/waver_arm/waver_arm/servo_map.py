@@ -80,6 +80,14 @@ SERVO_MAP: dict[str, ServoSpec] = {
     'torso_lift_joint': ServoSpec(3, 1964.3, 1035.7, 0.005, 0.135, 0.020),
 }
 
+# Joints que SUELTAN la señal al asentarse en el objetivo (0.5 s):
+# el husillo del L16 es autoblocante (sostiene 46 N sin energía), así
+# que mantener PWM solo calienta el motor y puede acuñarlo contra un
+# tope (pasó el 2026-07-22). Los servos de brazo NUNCA van aquí: ellos
+# necesitan par activo o el brazo se cae.
+RELEASE_WHEN_SETTLED = {'torso_lift_joint'}
+SETTLE_S = 0.5
+
 # Los dedos derechos son mimic (engranajes): NO tienen canal propio.
 MIMIC_JOINTS = {
     'left_arm_finger_r_joint':  ('left_arm_finger_l_joint', -1.0),

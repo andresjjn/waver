@@ -36,6 +36,10 @@ class Pca9685Backend(ABC):
     def disable_all(self) -> None:
         """Corta la señal de TODOS los canales (servos quedan sueltos)."""
 
+    @abstractmethod
+    def release(self, channel: int) -> None:
+        """Corta la señal de UN canal (para joints autoblocantes: L16)."""
+
 
 class MockPca9685(Pca9685Backend):
     """Simulador: registra los pulsos que SE HABRÍAN enviado."""
@@ -44,16 +48,22 @@ class MockPca9685(Pca9685Backend):
         self.last_us: dict[int, float] = {}
         self.write_count = 0
         self.enabled = True
+        self.released: set[int] = set()
 
     def write(self, spec: ServoSpec, position: float) -> float:
         us = spec.command_to_us(position)
         self.last_us[spec.channel] = us
         self.write_count += 1
+        self.released.discard(spec.channel)
         return us
 
     def disable_all(self) -> None:
         self.enabled = False
         self.last_us.clear()
+
+    def release(self, channel: int) -> None:
+        self.released.add(channel)
+        self.last_us.pop(channel, None)
 
 
 class RealPca9685(Pca9685Backend):
@@ -87,3 +97,6 @@ class RealPca9685(Pca9685Backend):
     def disable_all(self) -> None:
         for ch in self._pca.channels:
             retry_i2c(lambda c=ch: setattr(c, 'duty_cycle', 0))
+
+    def release(self, channel: int) -> None:
+        retry_i2c(lambda: setattr(self._pca.channels[channel], 'duty_cycle', 0))
