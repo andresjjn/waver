@@ -131,3 +131,122 @@ Al terminar la migración: Waver borra sus copias e importa SOMA
   `Waver/cad/MEDIDAS.md` (leerla ante cualquier duda de historia).
 - El CLAUDE.md de SOMA debe apuntar de vuelta a este archivo y a MEDIDAS.md
   (sección "ecosistema Waver").
+
+---
+
+# ANEXO TÉCNICO EXPLÍCITO (2026-07-25)
+
+Nota de estado: el repo `andresjjn/soma-arms` ya fue creado (2026-07-25).
+Este anexo es la referencia exacta para migrar sin releer conversaciones.
+
+## A. Tabla SERVO_MAP exacta (fuente: waver_arm/servo_map.py, tests verdes)
+
+PCA9685 a 50 Hz (periodo 20 000 µs, prescale 121). duty12 = µs/20000×4095
+(1500 µs = 307 cuentas). Servos de brazo: 500-2500 µs ↔ ±π/2 rad,
+max_rate 2.5 rad/s. Garra: 1500-2500 µs ↔ 0..1 rad.
+
+| Canal | Joint URDF | min_us | max_us | lower | upper | max_rate |
+|---|---|---|---|---|---|---|
+| 15 | right_arm_finger_l_joint | 1500 | 2500 | 0.0 | 1.0 | 2.5 |
+| 14 | right_arm_wrist_roll_joint | 500 | 2500 | -π/2 | +π/2 | 2.5 |
+| 13 | right_arm_wrist_pitch_joint ("codo 2") | 500 | 2500 | -π/2 | +π/2 | 2.5 |
+| 12 | right_arm_elbow_joint ("codo 1") | 500 | 2500 | -π/2 | +π/2 | 2.5 |
+| 11 | right_arm_shoulder_joint (elevación) | 500 | 2500 | -π/2 | +π/2 | 2.5 |
+| 10 | right_arm_yaw_joint (rotación hombro) | 500 | 2500 | -π/2 | +π/2 | 2.5 |
+| 9 | left_arm_finger_l_joint | 1500 | 2500 | 0.0 | 1.0 | 2.5 |
+| 8 | left_arm_wrist_roll_joint | 500 | 2500 | -π/2 | +π/2 | 2.5 |
+| 7 | left_arm_wrist_pitch_joint | 500 | 2500 | -π/2 | +π/2 | 2.5 |
+| 6 | left_arm_elbow_joint | 500 | 2500 | -π/2 | +π/2 | 2.5 |
+| 5 | left_arm_shoulder_joint | 500 | 2500 | -π/2 | +π/2 | 2.5 |
+| 4 | left_arm_yaw_joint | 500 | 2500 | -π/2 | +π/2 | 2.5 |
+| 3 | torso_lift_joint (L16, INVERTIDO) | 1964.3 | 1035.7 | 0.005 m | 0.135 m | 0.020 m/s |
+
+- torso: min_us > max_us es INTENCIONAL (unidad invertida, medida:
+  2000 µs = retraído, 1000 µs = extendido). Los anchors 1964.3/1035.7
+  son los µs de 5 y 135 mm: límites suaves anti-acuñamiento.
+- MIMIC_JOINTS: left/right_arm_finger_r_joint = finger_l × -1 (engranaje,
+  SIN canal). RELEASE_WHEN_SETTLED = {torso_lift_joint}, SETTLE_S = 0.5 s.
+- Canales 0-2 libres (0 bajo sospecha tras fallas de esa columna).
+
+## B. Interfaces del nodo (waver_arm/arm_controller_node.py → soma_driver)
+
+- Nodo `waver_arm` a 50 Hz. Parámetro `use_mock` (default True).
+- Sub `waver_arm/command` (sensor_msgs/JointState: name+position objetivo).
+- Pub `joint_states` (posición rampada + mimics — alimenta RViz/TF).
+- Srv `waver_arm/arm` (std_srvs/SetBool). Desarmar ⇒ disable_all().
+- Backend: `MockPca9685` (last_us, write_count, released) /
+  `RealPca9685(armed=False) ⇒ PermissionError` (regla de oro), import
+  perezoso de adafruit_pca9685, escrituras con `retry_i2c` (3 intentos,
+  5 ms — Errno 121 transitorio visto en hardware).
+- Tick: rampa `rate_limit` → write; el torso al asentarse 0.5 s hace
+  `release(canal)` (husillo autoblocante, PWM sostenido acuña).
+
+## C. Los 24 tests (test/test_servo_map.py) — LA especificación
+
+TestMapeoServo180 (4): centro=1500 µs; extremos ±π/2=500/2500;
+saturación fuera de límites; +45°=2000 µs.
+TestL16Torso (4): 0.0 m satura a 1964.3 µs; 0.14 m a 1035.7; 0.07 m=1500;
+max_rate=0.020.
+TestCanales (5): canales únicos; 13 entradas ≤15; contrato cableado real
+(15/10/9/4/3 y wrist_pitch=elbow+1); mimics sin canal; duty12(1500)=307.
+TestRampaSeguridad (4): paso máx 0.05 rad/tick; llegada exacta; reversa;
+carrera L16 completa = 7.0 s integrada.
+TestReleaseAutoblocante (2): solo torso libera; release corta y write revive.
+TestReintentoI2C (2): recupera fallo transitorio; relanza persistente.
+TestReglaDeOro (3): Real sin armar = PermissionError; mock registra;
+disable_all limpia.
+
+## D. URDF/xacro — valores actuales y estructura
+
+arm_6dof.xacro — macro `waver_arm(prefix, parent, *origin)`, propiedades
+[calibrar] estimadas de fotos (medir con calibrador para v0.1, en mm):
+base 95×95×62 · turntable r42 h12 · shoulder_off_z 45 · upper_len 120 ·
+fore_len 90 · wrist_len 55 · gripper_base_h 45 · finger_len 75.
+Joints ±π/2 (effort 1.0, vel 3.0); finger_l 0..1 en X + finger_r mimic
+×-1; frame fijo `${prefix}tool0`; macros inercia_caja/inercia_cilindro.
+
+waver_crab.urdf.xacro (ensamble; en SOMA vivirá la variante de pedestal +
+la CRAB se queda en Waver): base 194×110×55 (clearance 25), subchasis
+170×110×70, `laser_joint` FIJO en subchasis (regla D1b: lidar z=0.166
+constante), `torso_lift_joint` prismático 0-0.14 m (effort 100, vel 0.020),
+placa-torso 180×150×8, brazos en xyz 0.035 ±0.058 0.008, rpy 0 0 ±π/4.
+Validado: 29 links, 28 joints (15 móviles), 6.26 kg, masa elevada 2.4 kg,
+FK: left_arm_tool0 z 0.737→0.877 m con torso extendido (+140.0 mm por TF).
+
+Capa control: control.xacro (gazebo_ros2_control/GazeboSystem),
+controllers.yaml (JTC de 5 joints por brazo + JTC torso con constraint
+0.02 + GripperActionController ×2), SRDF (grupos left/right_arm,
+*_gripper, *_arm_with_torso; poses candle/compact/open/closed; mimics
+pasivos; disable_collisions adyacentes), kinematics.yaml (KDL; TRAC-IK
+es cambio de 1 línea, decisión pendiente con pruebas).
+
+## E. Chuleta de comandos validados
+
+Tests rápidos (servo_map es Python puro, no exige ROS):
+  python3 -m venv venv && venv/bin/pip install pytest
+  venv/bin/python -m pytest <ws>/src/waver_arm/test/ -q
+Smoke E2E en Docker (Waver): bash ROS2_Docker_twin/scripts/smoke_test.sh
+  dentro de la imagen (ver README de ROS2_Docker_twin). GOTCHA: el URDF a
+  robot_state_publisher va por --params-file YAML (por -p CLI revienta rcl).
+RViz en navegador (ruta validada):
+  docker run -d --name waver_twin_vnc -p 6080:80 --shm-size=512m \
+    -v RUTA_ABSOLUTA/ros2_ws:/ros2_ws tiryoh/ros2-desktop-vnc:humble
+  docker exec: apt install ros-humble-xacro ros-humble-joint-state-publisher-gui
+  lanzar SIEMPRE como `-u ubuntu` con DISPLAY=:1 HOME=/home/ubuntu
+  → http://localhost:6080/vnc.html?autoconnect=true&resize=scale
+Pi física: `ssh waver_robot` (ros@raspberrypi.local). En /home/ros/:
+  pca9685_check.py (validación sin potencia) y servo_discovery.py
+  (bursts de 60 ms canal por canal). i2cdetect -y 1 → 0x40.
+  smbus2 nativo. Chip: prescale 121 = 50.0 Hz exactos.
+
+## F. Estado de repos del ecosistema (2026-07-25)
+
+- andresjjn/waver: monorepo del rover (branch de trabajo
+  sesion-2026-07-05-red-energia-cad). Fuente de los 2 paquetes a migrar +
+  bitácora cad/MEDIDAS.md + este handoff.
+- andresjjn/soma-arms: creado, público. Destino de la migración.
+- andresjjn/second-brain: privado, corriendo (FalkorDB + Graphiti MCP en
+  Docker local, LM Studio gpt-oss-20b extractor + Qwen3-Embedding).
+  Las sesiones de SOMA deben alimentar el grafo (group_id soma-arms).
+- Alpha 1S: cerrado y publicado (3 repos). Su LiPo 2S es la batería de
+  banco actual de los brazos (vía UBEC 6V, NUNCA directa).
