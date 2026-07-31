@@ -560,3 +560,26 @@ Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
 - Cierre real de la noche: 13 canales mapeados y verificados con
   potencia, brazos + columna vertebral respondiendo, y 4 lecciones de
   hardware que el gemelo digital jamás nos habría enseñado.
+
+## 2026-07-30 — Jetson Orin Nano Super lista; los brazos obedecen a la Jetson
+
+- Jetson: JetPack 7.2 en NVMe (ISO installer por USB), firmware 36.4.3.
+  MAXN_SUPER persistente tras apuntar extlinux al DTB p3767-0005-super
+  (el script nvpower.sh de NVIDIA re-enlazaba el perfil normal en cada
+  boot mientras la máquina no se identificara "-super").
+- Escritorio remoto final: xrdp headless. Dos descartes con causa: NoMachine
+  v10 (suscripción) y Remote Login de GNOME (falla la redirección 3389→3390
+  con clientes macOS). Bug de fábrica corregido: ~/.xsessionrc de JetPack es
+  bash pero Xsession lo sourcea con dash → sesión moría en 0 s.
+- PCA9685 al header de la Jetson (pines 1/3/5/6, bus i2c-7). Workbench web
+  de calibración (soma-arms/scripts/servo_workbench.py): rampa server-side
+  50 Hz, un servo a la vez, L16 en ch3 con banda 1000-2000 us, rampa
+  140 us/s y auto-release 2 s. Los 13 actuadores verificados desde la
+  Jetson. Datos de calibración reiniciados (los primeros no eran fiables).
+- OAK-D Lite sobre la Jetson: depthai 2.32 + OpenCV 5 + regla udev; demos
+  de detección espacial (VPU), ArUco (cubo Alpha 1S, ids 7-10, ~7 cm) y
+  profundidad, las 3 funcionando.
+- Abiertos: recentrado mecánico de horns a 1500 us, captura completa
+  zero/min/max, muñeca izquierda que retiene con potencia sin señal
+  (diferencial pendiente), confirmar USB3 (SUPER) de la cámara, medir el
+  marcador impreso con regla.
