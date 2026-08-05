@@ -583,3 +583,26 @@ Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
   zero/min/max, muñeca izquierda que retiene con potencia sin señal
   (diferencial pendiente), confirmar USB3 (SUPER) de la cámara, medir el
   marcador impreso con regla.
+
+## 2026-08-05 — Sesión de calibrador: la geometría deja de ser estimada
+
+- Llegó el calibrador. Las 14 medidas de la cadena del brazo (derecho) +
+  anclajes del banco con flexómetro. Todo en soma-arms:
+  `soma_description/config/dimensions.yaml` con provenance por entrada.
+  Los estimados de fotos fallaban hasta 40 mm (brazo superior: 79.3 real
+  vs 120 estimado).
+- DESCUBRIMIENTO de configuración: los dos brazos CUELGAN de una caja
+  central (las dos cajas base atornilladas espalda con espalda, 109.8 mm
+  entre asientos de disco) sobre columna de soporte de monitor. Ejes de
+  los discos horizontales, colineales, hacia afuera, a 343 mm de la placa.
+- Los 4 primeros ejes de cada brazo son PARALELOS (disco ∥ hombro ∥ codo ∥
+  pitch): cada brazo es cadena plana 4R en su plano vertical; el roll de
+  muñeca saca la pinza del plano. Eslabón "clavícula" de 33 mm entre disco
+  y hombro. El manual decía yaw-primero vertical; el robot real manda.
+- Verificación que cerró el círculo: FK del modelo pone la punta de los
+  dedos a 5.7 mm de la placa en pose cero, igual que las fotos del rig.
+- El torso L16 queda formalmente FUERA del banco actual (dormante hasta el
+  torso impreso); smoke test de CI ahora prueba codo izquierdo −90° = la
+  herramienta sube 225 mm exactos.
+- Pendientes: pesar un brazo, verificar SIGNOS de ejes con potencia
+  (v0.2), re-spline del yaw izquierdo.
