@@ -39,7 +39,7 @@ referencia/cantidad) · **DECIDIDO** (elegido en sesión, compra sin confirmar) 
 
 | Ítem | Ref/Detalle | Cant | Estado | Fuente |
 |---|---|---|---|---|
-| Baterías DeWalt DCB203-B3 | 20V MAX 2.0Ah, del taladro (con cargador); rotación trabajo/carga | **2** | EN MANO | ANDRÉS 10-ago |
+| Baterías DeWalt DCB203-B3 | 20V MAX 2.0Ah, del taladro (con cargador); rotación trabajo/carga; **pack #1 verificado 20.2V en reposo (11-ago, multímetro re-certificado)** | **2** | EN MANO | ANDRÉS 11-ago |
 | Packs 6Ah compatibles (Waitley) | 2×6Ah ~$323k COP, para marathon | 2 | DECIDIDO (no comprados; con 2×2Ah alcanza por ahora) | mem #2162 + ANDRÉS 10-ago |
 | Adaptador/dock DeWalt salida cables | **Amazon B0B9NPZM3M**: kit Power Wheels c/ switch, fusible y 12AWG | 1 | EN MANO | ANDRÉS 10-ago |
 | UBEC Hobbywing 5A V2 | entrada 2-8S, jumper 5/6/7.4V | **2** | EN MANO | mem #1899/#1854 + banco |
