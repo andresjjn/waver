@@ -52,7 +52,7 @@ referencia/cantidad) · **DECIDIDO** (elegido en sesión, compra sin confirmar) 
 | XT60 macho/hembra c/ cable | 100mm 14AWG silicona, item 1005012281077296 | set | EN MANO | mem #1855 + banco |
 | Fusibles | repuestos ~30A (ubicación olvidada); el del kit B0B9NPZM3M probablemente 30A | var | EN MANO? | ANDRÉS 10-ago |
 | **Fusibles 7.5A-10A (COMPRAR)** | para la rama servos: 30A no protege un arnés de 14-16AWG | 0 | **PENDIENTE COMPRA** | análisis 10-ago |
-| **Conector barrel DC 5.5×2.5mm macho c/ cable (COMPRAR)** | para alimentar la Jetson desde el dock 12V; centro POSITIVO; ojo: el 5.5×2.1 común entra flojo y reinicia la placa | 0 (comprar 2-3) | **PENDIENTE COMPRA** | misión wireless 10-ago |
+| Conector barrel DC 5.5×2.5mm macho | para la Jetson desde el dock 12V; centro POSITIVO; **verificado: entra justo y firme** | 1 | EN MANO | ANDRÉS 10-ago |
 
 ## Sensores y monitoreo
 
@@ -88,7 +88,7 @@ referencia/cantidad) · **DECIDIDO** (elegido en sesión, compra sin confirmar) 
 Todo lo mandado a comprar llegó. Confirmaciones incorporadas arriba.
 Quedan vivos:
 
-1. **COMPRAR fusibles 7.5A-10A** para la rama de servos (los repuestos de ~30A no protegen el arnés).
+1. **LISTA DE COMPRAS COMPLETA (solo 2 ítems)**: fusible 7.5-10A para la rama de servos + **pila 9V para el multímetro**.
 2. **Ubicar los fusibles de repuesto** de 30A (guardados en lugar olvidado).
 3. **Contar los motores N20** con encoder (cantidad exacta).
 4. ~~Umbral de sobredescarga del conversor~~ **RESUELTO 10-ago: 15.2V** (listing B0FP1B1F86). El piso de software se alineó a 15.2V. Regla extra del fabricante: **sacar la batería del dock cuando no se use** (drenaje parásito).
