@@ -31,7 +31,7 @@ referencia/cantidad) · **DECIDIDO** (elegido en sesión, compra sin confirmar) 
 | Servos MG996R (en brazos) | 12 instalados y calibrados 03-ago | 12 | EN MANO | banco |
 | Servos MG995/MG996R (repuesto) | lote AliExpress | 5 | EN MANO? | mem #1899 |
 | Actuonix L16-140-63-6-R | torso; ch3; convención INVERTIDA | 1 | EN MANO | banco 22-jul |
-| Motor 12GA-N20 hall 12V 300RPM | con bracket, compra proactiva | 1 | EN MANO? | mem #1899 |
+| Motores 12GA-N20 hall 12V 300RPM | con bracket, para tracción rover (cant. exacta por contar) | 2+ | EN MANO | mem #1899 + ANDRÉS 10-ago |
 | Horns disco aluminio 25T | p/ MG995/996, ~$15.598 COP x10 | 10 | EN MANO | mem #1905 + re-splines |
 | Pinzas LG-KT (Lynxmotion style) | garra engranada de los brazos | 2 | EN MANO | banco |
 
@@ -39,24 +39,25 @@ referencia/cantidad) · **DECIDIDO** (elegido en sesión, compra sin confirmar) 
 
 | Ítem | Ref/Detalle | Cant | Estado | Fuente |
 |---|---|---|---|---|
-| Batería DeWalt DCB203-B3 | 20V MAX 2.0Ah, del taladro (con cargador) | 1 | EN MANO | mem #1825 + banco 10-ago |
-| Packs 6Ah compatibles (Waitley) | 2×6Ah ~$323k COP, para marathon | 2 | DECIDIDO | mem #2162 |
-| Adaptador/dock DeWalt salida cables | estilo Power Wheels c/ fusible (Amazon B0B9NPZM3M o ML equiv.) | 1 | EN MANO? | mem #1805/#1589 + banco 10-ago |
+| Baterías DeWalt DCB203-B3 | 20V MAX 2.0Ah, del taladro (con cargador); rotación trabajo/carga | **2** | EN MANO | ANDRÉS 10-ago |
+| Packs 6Ah compatibles (Waitley) | 2×6Ah ~$323k COP, para marathon | 2 | DECIDIDO (no comprados; con 2×2Ah alcanza por ahora) | mem #2162 + ANDRÉS 10-ago |
+| Adaptador/dock DeWalt salida cables | **Amazon B0B9NPZM3M**: kit Power Wheels c/ switch, fusible y 12AWG | 1 | EN MANO | ANDRÉS 10-ago |
 | UBEC Hobbywing 5A V2 | entrada 2-8S, jumper 5/6/7.4V | **2** | EN MANO | mem #1899/#1854 + banco |
 | Conversor 20V→12V 240W | c/ switch y **protección de sobredescarga**, ~$80k COP | 1 | EN MANO | mem #1903 + banco 10-ago |
-| Módulo MOSFET relay aislado | FR120N **o** LR7843 **o** AOD4184 (variante por leer en serigrafía) | ? | EN MANO? | mem #1899 |
-| Módulos diodo ideal anti-retorno | DC5-60V 15A (protección carga/solar) | ? | EN MANO? | mem #1899 |
-| Módulo ORing LM66200 (WeAct) | $7.098 COP, conmutación dual | ? | EVALUADO | mem #1903 |
-| Placa dual switching 15A UPS | $41.285 COP, alternativa al ORing | ? | EVALUADO | mem #1903 |
+| Módulo MOSFET relay | **D4184 (AOD4184)**, serigrafía "HeilandLv D4184": 40V/50A, entrada lógica 3.3V OK, conmutación lado bajo | 1+ | EN MANO | ANDRÉS 10-ago |
+| Módulos diodo ideal anti-retorno | DC5-60V 15A | **2** | EN MANO | ANDRÉS 10-ago |
+| Módulo ORing LM66200 (WeAct) | $7.098 COP, conmutación dual | 0 | EVALUADO, no comprado | ANDRÉS 10-ago |
+| Placa dual switching 15A UPS | $41.285 COP, alternativa al ORing | 0 | EVALUADO, no comprado | ANDRÉS 10-ago |
 | LiPo 2S + UBEC (banco original) | cadena de banco pre-DeWalt | 1 | EN MANO | banco |
 | XT60 macho/hembra c/ cable | 100mm 14AWG silicona, item 1005012281077296 | set | EN MANO | mem #1855 + banco |
-| Fusibles | tipo/amperaje por inventariar | ? | EN MANO? | mem #1850 |
+| Fusibles | repuestos ~30A (ubicación olvidada); el del kit B0B9NPZM3M probablemente 30A | var | EN MANO? | ANDRÉS 10-ago |
+| **Fusibles 7.5A-10A (COMPRAR)** | para la rama servos: 30A no protege un arnés de 14-16AWG | 0 | **PENDIENTE COMPRA** | análisis 10-ago |
 
 ## Sensores y monitoreo
 
 | Ítem | Ref/Detalle | Cant | Estado | Fuente |
 |---|---|---|---|---|
-| INA3221 triple canal I2C | shunts 0.1Ω 2W, ±1.638A/canal, dir 0x40/41/44/45, $7.466 COP | ? | EN MANO? | mem #1900 + ANDRÉS 10-ago |
+| INA3221 triple canal I2C | shunts 0.1Ω 2W, ±1.638A/canal, dir 0x40/41/44/45, $7.466 COP | **3** | EN MANO | ANDRÉS 10-ago |
 | INA219 (rover) | monitor batería 3S del Wave Rover | 1 | EN MANO | mem #857 |
 | Iluminador IR 850nm 12V IP66 | 4 LED gran angular | 1 | EN MANO? | mem #1899 |
 | Pogo pins magnéticos | 10A 24V/18A M/H (dock futuro; largo de cable en duda) | set | EN MANO? | mem #1899/#2170 |
@@ -81,14 +82,13 @@ referencia/cantidad) · **DECIDIDO** (elegido en sesión, compra sin confirmar) 
 | 0x41 | PCA9685 #2 | futuro plan dos rieles (puente A0) |
 | 0x44 | INA3221 | **no 0x42**: el módulo salta 0x40/41/44/45 |
 
-## POR CONFIRMAR con Andrés (checklist de banco, 10 min)
+## Checklist VERIFICADO por Andrés el 10-ago-2026
 
-1. **MOSFET**: leer serigrafía del módulo — ¿FR120N, LR7843 o AOD4184? ¿cuántos?
-2. **INA3221**: ¿cuántas unidades llegaron?
-3. **Packs Waitley 6Ah**: ¿se compraron o quedó en decisión?
-4. **ORing LM66200 / placa dual 15A**: ¿alguno se compró?
-5. **Diodos ideales 15A**: ¿cuántos y dónde están?
-6. **Adaptador DeWalt**: ¿cuál llegó (Amazon B0B9NPZM3M o el de MercadoLibre)?
-7. **Fusibles**: amperajes disponibles.
-8. **Conversor 12V**: umbral exacto de su protección de sobredescarga (medir).
-9. Ítems Waver rover no listados aún (motores, lidar, etc.): sesión aparte.
+Todo lo mandado a comprar llegó. Confirmaciones incorporadas arriba.
+Quedan vivos:
+
+1. **COMPRAR fusibles 7.5A-10A** para la rama de servos (los repuestos de ~30A no protegen el arnés).
+2. **Ubicar los fusibles de repuesto** de 30A (guardados en lugar olvidado).
+3. **Contar los motores N20** con encoder (cantidad exacta).
+4. **Umbral de sobredescarga del conversor 12V**: la telemetría del INA3221 lo capturará la primera vez que actúe en servicio; mientras tanto rige el piso de papel de 15.0V. Alternativa rápida: buscarlo en la publicación del vendedor.
+5. Ítems del rover Waver (lidar, ruedas, etc.): sesión de inventario aparte.
