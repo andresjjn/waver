@@ -52,6 +52,7 @@ referencia/cantidad) · **DECIDIDO** (elegido en sesión, compra sin confirmar) 
 | XT60 macho/hembra c/ cable | 100mm 14AWG silicona, item 1005012281077296 | set | EN MANO | mem #1855 + banco |
 | Fusibles | repuestos ~30A (ubicación olvidada); el del kit B0B9NPZM3M probablemente 30A | var | EN MANO? | ANDRÉS 10-ago |
 | **Fusibles 7.5A-10A (COMPRAR)** | para la rama servos: 30A no protege un arnés de 14-16AWG | 0 | **PENDIENTE COMPRA** | análisis 10-ago |
+| **Conector barrel DC 5.5×2.5mm macho c/ cable (COMPRAR)** | para alimentar la Jetson desde el dock 12V; centro POSITIVO; ojo: el 5.5×2.1 común entra flojo y reinicia la placa | 0 (comprar 2-3) | **PENDIENTE COMPRA** | misión wireless 10-ago |
 
 ## Sensores y monitoreo
 
