@@ -43,7 +43,7 @@ referencia/cantidad) · **DECIDIDO** (elegido en sesión, compra sin confirmar) 
 | Packs 6Ah compatibles (Waitley) | 2×6Ah ~$323k COP, para marathon | 2 | DECIDIDO (no comprados; con 2×2Ah alcanza por ahora) | mem #2162 + ANDRÉS 10-ago |
 | Adaptador/dock DeWalt salida cables | **Amazon B0B9NPZM3M**: kit Power Wheels c/ switch, fusible y 12AWG | 1 | EN MANO | ANDRÉS 10-ago |
 | UBEC Hobbywing 5A V2 | entrada 2-8S, jumper 5/6/7.4V | **2** | EN MANO | mem #1899/#1854 + banco |
-| Conversor 20V→12V 240W | c/ switch y **protección de sobredescarga**, ~$80k COP | 1 | EN MANO | mem #1903 + banco 10-ago |
+| Conversor-dock 20V→12V 240W | **Amazon B0FP1B1F86**: el pack se monta EN el dock; salida 12V/20A regulada; **UVLO 15.2V** + sobrecorriente/corto/sobretemp; fusible 30A incluido; **cable AMARILLO=positivo** | 1 | EN MANO | listing 10-ago |
 | Módulo MOSFET relay | **D4184 (AOD4184)**, serigrafía "HeilandLv D4184": 40V/50A, entrada lógica 3.3V OK, conmutación lado bajo | 1+ | EN MANO | ANDRÉS 10-ago |
 | Módulos diodo ideal anti-retorno | DC5-60V 15A | **2** | EN MANO | ANDRÉS 10-ago |
 | Módulo ORing LM66200 (WeAct) | $7.098 COP, conmutación dual | 0 | EVALUADO, no comprado | ANDRÉS 10-ago |
@@ -90,5 +90,5 @@ Quedan vivos:
 1. **COMPRAR fusibles 7.5A-10A** para la rama de servos (los repuestos de ~30A no protegen el arnés).
 2. **Ubicar los fusibles de repuesto** de 30A (guardados en lugar olvidado).
 3. **Contar los motores N20** con encoder (cantidad exacta).
-4. **Umbral de sobredescarga del conversor 12V**: la telemetría del INA3221 lo capturará la primera vez que actúe en servicio; mientras tanto rige el piso de papel de 15.0V. Alternativa rápida: buscarlo en la publicación del vendedor.
+4. ~~Umbral de sobredescarga del conversor~~ **RESUELTO 10-ago: 15.2V** (listing B0FP1B1F86). El piso de software se alineó a 15.2V. Regla extra del fabricante: **sacar la batería del dock cuando no se use** (drenaje parásito).
 5. Ítems del rover Waver (lidar, ruedas, etc.): sesión de inventario aparte.
