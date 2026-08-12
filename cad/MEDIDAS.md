@@ -615,15 +615,28 @@ Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
 - Fusible 7.5-10A no hubo en el pueblo → repuestos de motos/carros. HOY no
   bloquea: la sesión de metal usa la cadena LiPo 2S conocida (doctrina de
   una variable a la vez); la cadena DeWalt debuta cuando tenga su fusible.
-- SOLDADURA DE HOY (decidida): todo el cobre de la arquitectura dos placas
-  SIN conmutar servos:
+- SOLDADURA DE HOY (decidida, AMPLIADA): todo el cobre de la arquitectura
+  dos placas + INA3221, SIN conmutar servos:
   · PCA9685 #2: puente A0 → 0x41. Daisy I2C (4 hilos <10cm) desde placa #1.
+  · INA3221 SE INSTALA HOY (decisión 11-ago, antes era "futuro"):
+    lógica al final del daisy (PCA#2 → INA, 4 hilos), jumper dir → 0x44;
+    shunt CH1 EN SERIE en el positivo entre fusible y UBEC #1 (se corta
+    ese tramo; nacen cables W15/W16). CH2/CH3 SIN conectar: el shunt de
+    fábrica (0.1Ω 2W) se quemaría en el riel de 6V a 5A.
   · UBEC #2: jumper a 6V + pigtail XT60 + verificar 6.0V sin carga.
   · V+ separados por placa (D3: aislamiento por brazo). GND común.
   · Los 12 servos SIGUEN en placa #1 (0x40). La conmutación del brazo
     izquierdo a 0x41 va en sesión posterior, con el software multi-placa
     ya en main. Pendiente material: ¿segundo condensador 1000µF?
-- Verificación al subir la Jetson: i2cdetect -y -r 7 → 0x40 Y 0x41.
+- PLANO DE CABLEADO formal (cable por cable, wirelist W01-W23 + WF, config
+  C1-C6, notas N1-N8, checklist V1-V9): cad/plano_cableado_soma_v02.html
+  (rev A, también publicado como artifact para verlo junto al banco).
+- Verificación al subir la Jetson: i2cdetect -y -r 7 → 0x40, 0x41 Y 0x44;
+  firma del INA: i2cget -y 7 0x44 0xfe w → 0x4954 ('TI' bytes volteados).
+- OJO software: BATTERY_FLOOR_V=15.2 es del pack DeWalt 5S. Con la LiPo 2S
+  del banco (~8V) ese guard rechazaría todo: la integración del INA al
+  nodo llevará piso por PERFIL DE FUENTE. Hoy el INA se instala y se lee;
+  no gobierna el armado todavía.
 - Software pendiente (Claude): (a) soporte multi-placa retrocompatible
   (campo address default 0x40 en servo_map + router de backends + tests);
   (b) integración INA3221 al nodo: rechazar armado bajo 15.2V.
