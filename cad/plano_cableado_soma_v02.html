@@ -79,7 +79,7 @@ code{font-family:var(--mono);font-size:.82em;background:var(--soft);padding:.08e
 <div class="tb">
   <div><span class="k">Proyecto</span><span class="v big">SOMA · banco bimanual</span></div>
   <div><span class="k">Documento</span><span class="v">Plano de cableado</span></div>
-  <div><span class="k">Rev / Fecha</span><span class="v">A · 2026-08-11</span></div>
+  <div><span class="k">Rev / Fecha</span><span class="v">B · 2026-08-11</span></div>
   <div><span class="k">Sesión</span><span class="v">v0.2 · dos placas + INA</span></div>
 </div>
 
@@ -135,8 +135,8 @@ code{font-family:var(--mono);font-size:.82em;background:var(--soft);padding:.08e
 <rect class="mod" x="580" y="60" width="230" height="240" rx="6"/>
 <text class="st" x="695" y="86" text-anchor="middle">PCA9685 #2</text>
 <text class="ss" x="695" y="103" text-anchor="middle">V+ propio · sin servos hoy</text>
-<rect x="605" y="112" width="180" height="19" rx="9.5" fill="var(--warn-bg)"/>
-<text class="sw" x="695" y="125" text-anchor="middle" fill="var(--warn)">A0 PUENTEADO = 0x41</text>
+<rect x="605" y="112" width="180" height="19" rx="9.5" fill="var(--hoy-bg)"/>
+<text class="sw" x="695" y="125" text-anchor="middle" fill="var(--hoy)">A0+A1 CERRADOS = 0x43</text>
 <rect class="pad" x="574" y="145" width="12" height="10"/><text class="sl" x="594" y="154">GND</text>
 <rect class="pad" x="574" y="167" width="12" height="10"/><text class="sx" x="594" y="176">OE ∅</text>
 <rect class="pad" x="574" y="189" width="12" height="10"/><text class="sl" x="594" y="198">SCL</text>
@@ -161,7 +161,7 @@ code{font-family:var(--mono);font-size:.82em;background:var(--soft);padding:.08e
 <text class="st" x="1005" y="86" text-anchor="middle">INA3221</text>
 <text class="ss" x="1005" y="103" text-anchor="middle">monitor · solo lectura</text>
 <rect x="912" y="112" width="186" height="19" rx="9.5" fill="var(--hoy-bg)"/>
-<text class="sw" x="1005" y="125" text-anchor="middle" fill="var(--hoy)">jumper dir = 0x44</text>
+<text class="sw" x="1005" y="125" text-anchor="middle" fill="var(--hoy)">gota A0-VS = 0x41</text>
 <rect class="pad" x="884" y="145" width="12" height="10"/><text class="sl" x="904" y="154">GND</text>
 <rect class="pad" x="884" y="189" width="12" height="10"/><text class="sl" x="904" y="198">SCL</text>
 <rect class="pad" x="884" y="211" width="12" height="10"/><text class="sl" x="904" y="220">SDA</text>
@@ -370,10 +370,10 @@ code{font-family:var(--mono);font-size:.82em;background:var(--soft);padding:.08e
 <table>
 <thead><tr><th>ID</th><th>Dónde</th><th>Qué hacer</th><th>Estado</th></tr></thead>
 <tbody>
-<tr><td class="id">C1</td><td class="term">PCA#2 · pad A0</td><td>Puente de estaño cerrado → dirección 0x41. Solo A0; A1–A5 abiertos.</td><td><span class="tag hoy">HOY</span></td></tr>
-<tr><td class="id">C2</td><td class="term">INA3221 · jumper dirección</td><td>Posición que dé 0x44: cualquiera que NO sea 0x40 ni 0x41. Se confirma con i2cdetect; si aparece otra dirección libre, avisar (el driver la acepta por parámetro).</td><td><span class="tag hoy">HOY</span></td></tr>
+<tr><td class="id">C1</td><td class="term">PCA#2 · pad A0</td><td>Pares A0 y A1 cerrados → dirección 0x43. Verificado en bus: responde prescale virgen 0x1E.</td><td><span class="tag hoy">HECHO</span></td></tr>
+<tr><td class="id">C2</td><td class="term">INA3221 · jumper dirección</td><td>Gota A0↔VS (pads adyacentes) → 0x41. El pin A0 solo ofrece 0x40-0x43 (SBOS576); el plan 0x44 venía del INA219 del rover. Verificado: firma TI 0x5449 en 0x41.</td><td><span class="tag hoy">HECHO</span></td></tr>
 <tr><td class="id">C3</td><td class="term">UBEC#2 · jumper de salida</td><td>Posición 6V. La posición 7.4V está PROHIBIDA (los MG996R son de 7.2V máx).</td><td><span class="tag hoy">HOY</span></td></tr>
-<tr><td class="id">C4</td><td class="term">PCA#2 · borne verde</td><td>Condensador 1000µF entre V+ y GND (respetar polaridad: franja = negativo). Pendiente confirmar si hay un segundo en inventario.</td><td><span class="tag warn">CONFIRMAR</span></td></tr>
+<tr><td class="id">C4</td><td class="term">PCA#2 · borne verde</td><td>El clon del PCA#2 trae condensador electrolítico a bordo (visto 11-ago). El 1000µF extra se decide el día de la conmutación de servos.</td><td><span class="tag ex">APLAZADO</span></td></tr>
 <tr><td class="id">C5</td><td class="term">INA3221 · CH2 y CH3</td><td>SIN conectar. Ver nota N4: el shunt de fábrica no aguanta el riel de 6V.</td><td><span class="tag hoy">HOY</span></td></tr>
 <tr><td class="id">C6</td><td class="term">UBEC#1 · jumper</td><td>Ya está en 6V, verificado en sesiones previas. No tocar.</td><td><span class="tag ex">EXISTENTE</span></td></tr>
 </tbody>
@@ -404,10 +404,10 @@ code{font-family:var(--mono);font-size:.82em;background:var(--soft);padding:.08e
 <li><input type="checkbox"><span class="vid">V5</span><span>Polaridad del XT60 pigtail contra la LiPo: rojo con rojo, medida con multímetro antes de conectar nada.</span></li>
 <li><input type="checkbox"><span class="vid">V6</span><span>UBEC#2 conectado a la LiPo SIN carga: salida 6.00V en el multímetro re-certificado.</span></li>
 <li><input type="checkbox"><span class="vid">V7</span><span>Brazos compactos y apoyados en el banco ANTES de energizar cualquier V+ (regla inviolable 4).</span></li>
-<li><input type="checkbox"><span class="vid">V8</span><span>Con la Jetson arriba: <code>sudo i2cdetect -y -r 7</code> debe mostrar <code>0x40</code>, <code>0x41</code> y <code>0x44</code>.</span></li>
-<li><input type="checkbox"><span class="vid">V9</span><span>Firma del INA: <code>sudo i2cget -y 7 0x44 0xfe w</code> debe responder <code>0x4954</code> ("TI" con los bytes volteados). Voltaje CH1 coherente con el multímetro.</span></li>
+<li><input type="checkbox"><span class="vid">V8</span><span>Con la Jetson arriba: <code>i2cdetect -y -r 7</code> debe mostrar <code>0x40</code>, <code>0x41</code> y <code>0x43</code> — CUMPLIDO 11-ago.</span></li>
+<li><input type="checkbox"><span class="vid">V9</span><span>Firma del INA: <code>i2cget -y 7 0x41 0xfe w</code> debe responder <code>0x4954</code> ("TI" con los bytes volteados) — CUMPLIDO 11-ago, die ID 0x3220. Voltaje CH1 contra el multímetro cuando haya potencia.</span></li>
 </ul>
 </section>
 
-<p class="foot">SOMA · plano_cableado_soma_v02.html · rev A · 2026-08-11 · dibujó Claudia · aprueba Andrés · fuente en Waver/cad, versionado en git</p>
+<p class="foot">SOMA · plano_cableado_soma_v02.html · rev B · 2026-08-11 · direcciones verificadas en el bus (0x40 · 0x41 · 0x43) · dibujó Claudia · soldó y verificó Andrés · fuente en Waver/cad, versionado en git</p>
 </div>

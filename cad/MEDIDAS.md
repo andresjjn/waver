@@ -645,3 +645,34 @@ Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
   final → ritual de armado de Andrés → soma_sign_check joint por joint
   (anotar flips → Claude corrige ejes en xacro) → soma_primitives demo
   FILMADA → tag v0.2 si todo canta.
+
+
+## 2026-08-11 (noche) — BUS DE DOS PLACAS + INA3221: VIVO Y VERIFICADO
+
+- i2cdetect -y -r 7: **0x40 (PCA#1) · 0x41 (INA3221) · 0x43 (PCA#2)**
+  + 0x70 (all-call, normal). Identidades por firma, no por fe: 0x41
+  responde manufacturer 0x5449 'TI' y die ID 0x3220; 0x43 responde
+  prescale virgen (0x1E). Tres chips, tres nombres, cero colisiones.
+- El camino: los tres llegaron apiñados en 0x40 (ningún puente de
+  dirección estaba hecho). Forense de la colisión: reg 0xFE de 0x41
+  leyó 0x0814 = AND bit a bit de 0x1E1E (PCA) con 0x5449 (INA), porque
+  en I2C los ceros dominan. Colisión demostrada sin desoldar nada.
+- LECCIÓN de direcciones: el INA3221 solo ofrece 0x40-0x43 vía A0
+  (SBOS576); el "0x44/45" del inventario era del INA219 del rover.
+  Mapa final por adyacencia de pads: INA 0x41 (gota A0↔VS), PCA#2
+  0x43 (A0+A1). Tres puentes SMD de Andrés, tres al primer intento.
+- Lección de topología: I2C es bus. La "estrella" soldada desde los
+  pines de entrada del PCA#1 es eléctricamente idéntica al daisy por
+  el header de salida. Válida tal cual quedó.
+- El clon del PCA#2 (V1246) trae condensador electrolítico a bordo:
+  compra del segundo 1000µF aplazada a la conmutación.
+- Bus V del INA: CH1/CH2/CH3 = 0.00V (correcto: potencia sin pasar
+  por los shunts todavía).
+- Software corregido con los hechos (soma-arms 8ef31e5): DEFAULT
+  0x44→0x41 en ina3221.py, test de dirección reescrito explicando el
+  cambio de hecho físico, CLAUDE.md y wiring.md al mapa real. Suite
+  130 passed + 6 skipped local.
+- Los 12 servos siguen en 0x40: la demo de hoy NO necesita el software
+  multi-placa. Pendiente en banco: ¿shunt CH1 en serie ya insertado?
+  (confirmar), UBEC#2 a 6.00V sin carga, luego cadena LiPo → ritual de
+  armado (Andrés) → sign_check → demo filmada → tag v0.2.

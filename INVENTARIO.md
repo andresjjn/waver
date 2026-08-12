@@ -58,7 +58,7 @@ referencia/cantidad) · **DECIDIDO** (elegido en sesión, compra sin confirmar) 
 
 | Ítem | Ref/Detalle | Cant | Estado | Fuente |
 |---|---|---|---|---|
-| INA3221 triple canal I2C | shunts 0.1Ω 2W, ±1.638A/canal, dir 0x40/41/44/45, $7.466 COP | **3** | EN MANO | ANDRÉS 10-ago |
+| INA3221 triple canal I2C | shunts 0.1Ω 2W, ±1.638A/canal; dir por A0: solo 0x40-0x43; **#1 instalado en 0x41 (A0↔VS) 11-ago**; $7.466 COP | **3** | EN MANO | ANDRÉS 10-ago + banco 11-ago |
 | INA219 (rover) | monitor batería 3S del Wave Rover | 1 | EN MANO | mem #857 |
 | Iluminador IR 850nm 12V IP66 | 4 LED gran angular | 1 | EN MANO? | mem #1899 |
 | Pogo pins magnéticos | 10A 24V/18A M/H (dock futuro; largo de cable en duda) | set | EN MANO? | mem #1899/#2170 |
@@ -69,7 +69,7 @@ referencia/cantidad) · **DECIDIDO** (elegido en sesión, compra sin confirmar) 
 | Ítem | Ref/Detalle | Cant | Estado | Fuente |
 |---|---|---|---|---|
 | Extensiones servo Futaba/JR | 22AWG trenzadas 75-1000mm, item 1005007301246561, x10 | 10 | EN MANO | mem #1860 + arnés 10-ago |
-| PCA9685 16ch I2C | **comprados 2 por redundancia**; #1 en servicio (0x40); **#2 en instalación 11-ago: puente A0 → 0x41**, V+ propio, servos aún NO conmutados | **2** | EN MANO | mem #1850/#1899 + banco 11-ago |
+| PCA9685 16ch I2C | **comprados 2 por redundancia**; #1 en servicio (0x40); **#2 INSTALADO 11-ago en 0x43 (pares A0+A1)**, V+ propio, trae electrolítico a bordo, servos aún NO conmutados | **2** | EN MANO | mem #1850/#1899 + banco 11-ago |
 | Tornillería ISO7380 inox 304 | surtido M2-M12 hex socket | kit | EN MANO? | mem #1899 |
 | Regleta pines hembra (header Jetson) | arnés definitivo I2C, soldada 10-ago | 1 | EN MANO | banco 10-ago |
 | Duponts / pines largos | para cortar-soldar-termoencoger | var | EN MANO | mem #1905 |
@@ -79,16 +79,22 @@ referencia/cantidad) · **DECIDIDO** (elegido en sesión, compra sin confirmar) 
 
 | Dir | Dispositivo | Nota |
 |---|---|---|
-| 0x40 | PCA9685 #1 | actual |
-| 0x41 | PCA9685 #2 | futuro plan dos rieles (puente A0) |
-| 0x44 | INA3221 | **no 0x42**: el módulo salta 0x40/41/44/45 |
+| 0x40 | PCA9685 #1 | los 12 servos hoy |
+| 0x43 | PCA9685 #2 | pares A0+A1 cerrados; verificado en bus 11-ago (prescale virgen) |
+| 0x41 | INA3221 | gota A0↔VS; verificado 11-ago: firma TI 0x5449, die 0x3220 |
+| 0x70 | all-call PCA | siempre presente, no es un chip aparte |
+
+**Lección 11-ago**: el INA3221 solo ofrece 0x40-0x43 por su pin A0
+(datasheet SBOS576). El dato "0x40/41/44/45" era del INA219 del rover:
+chip equivocado. La adyacencia de pads del breakout decidió el mapa
+final, todo con gotas de estaño simples, cero puentes de alambre.
 
 ## Checklist VERIFICADO por Andrés el 10-ago-2026
 
 Todo lo mandado a comprar llegó. Confirmaciones incorporadas arriba.
 Quedan vivos:
 
-1. **LISTA DE COMPRAS**: fusible 7.5-10A (no hubo en el pueblo: buscarlo en repuestos de MOTOS/carros, es estándar automotriz) + **¿segundo condensador 1000µF?** para el PCA9685 #2 (confirmar si hay). ~~Pila 9V~~ COMPRADA 11-ago, multímetro re-certificado.
+1. **LISTA DE COMPRAS**: fusible 7.5-10A (no hubo en el pueblo: buscarlo en repuestos de MOTOS/carros, es estándar automotriz). ~~¿Segundo condensador 1000µF?~~ el clon del PCA9685 #2 trae electrolítico a bordo (visto 11-ago); decisión final el día de la conmutación. ~~Pila 9V~~ COMPRADA 11-ago, multímetro re-certificado.
 2. **Ubicar los fusibles de repuesto** de 30A (guardados en lugar olvidado).
 3. **Contar los motores N20** con encoder (cantidad exacta).
 4. ~~Umbral de sobredescarga del conversor~~ **RESUELTO 10-ago: 15.2V** (listing B0FP1B1F86). El piso de software se alineó a 15.2V. Regla extra del fabricante: **sacar la batería del dock cuando no se use** (drenaje parásito).
