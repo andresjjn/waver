@@ -69,7 +69,7 @@ referencia/cantidad) · **DECIDIDO** (elegido en sesión, compra sin confirmar) 
 | Ítem | Ref/Detalle | Cant | Estado | Fuente |
 |---|---|---|---|---|
 | Extensiones servo Futaba/JR | 22AWG trenzadas 75-1000mm, item 1005007301246561, x10 | 10 | EN MANO | mem #1860 + arnés 10-ago |
-| PCA9685 16ch I2C | **comprados 2 por redundancia** | **2** | EN MANO | mem #1850/#1899 |
+| PCA9685 16ch I2C | **comprados 2 por redundancia**; #1 en servicio (0x40); **#2 en instalación 11-ago: puente A0 → 0x41**, V+ propio, servos aún NO conmutados | **2** | EN MANO | mem #1850/#1899 + banco 11-ago |
 | Tornillería ISO7380 inox 304 | surtido M2-M12 hex socket | kit | EN MANO? | mem #1899 |
 | Regleta pines hembra (header Jetson) | arnés definitivo I2C, soldada 10-ago | 1 | EN MANO | banco 10-ago |
 | Duponts / pines largos | para cortar-soldar-termoencoger | var | EN MANO | mem #1905 |
@@ -88,7 +88,7 @@ referencia/cantidad) · **DECIDIDO** (elegido en sesión, compra sin confirmar) 
 Todo lo mandado a comprar llegó. Confirmaciones incorporadas arriba.
 Quedan vivos:
 
-1. **LISTA DE COMPRAS COMPLETA (solo 2 ítems)**: fusible 7.5-10A para la rama de servos + **pila 9V para el multímetro**.
+1. **LISTA DE COMPRAS**: fusible 7.5-10A (no hubo en el pueblo: buscarlo en repuestos de MOTOS/carros, es estándar automotriz) + **¿segundo condensador 1000µF?** para el PCA9685 #2 (confirmar si hay). ~~Pila 9V~~ COMPRADA 11-ago, multímetro re-certificado.
 2. **Ubicar los fusibles de repuesto** de 30A (guardados en lugar olvidado).
 3. **Contar los motores N20** con encoder (cantidad exacta).
 4. ~~Umbral de sobredescarga del conversor~~ **RESUELTO 10-ago: 15.2V** (listing B0FP1B1F86). El piso de software se alineó a 15.2V. Regla extra del fabricante: **sacar la batería del dock cuando no se use** (drenaje parásito).

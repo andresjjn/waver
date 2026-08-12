@@ -606,3 +606,29 @@ Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
   herramienta sube 225 mm exactos.
 - Pendientes: pesar un brazo, verificar SIGNOS de ejes con potencia
   (v0.2), re-spline del yaw izquierdo.
+
+
+## 2026-08-11 — Sesión v0.2 EN CURSO (estado guardado pre-compact)
+
+- Multímetro re-certificado (pila 9V nueva): LiPo 8.2V, pack DeWalt 20.2V
+  en reposo. El "15.6V" de anoche era la pila muerta del multímetro.
+- Fusible 7.5-10A no hubo en el pueblo → repuestos de motos/carros. HOY no
+  bloquea: la sesión de metal usa la cadena LiPo 2S conocida (doctrina de
+  una variable a la vez); la cadena DeWalt debuta cuando tenga su fusible.
+- SOLDADURA DE HOY (decidida): todo el cobre de la arquitectura dos placas
+  SIN conmutar servos:
+  · PCA9685 #2: puente A0 → 0x41. Daisy I2C (4 hilos <10cm) desde placa #1.
+  · UBEC #2: jumper a 6V + pigtail XT60 + verificar 6.0V sin carga.
+  · V+ separados por placa (D3: aislamiento por brazo). GND común.
+  · Los 12 servos SIGUEN en placa #1 (0x40). La conmutación del brazo
+    izquierdo a 0x41 va en sesión posterior, con el software multi-placa
+    ya en main. Pendiente material: ¿segundo condensador 1000µF?
+- Verificación al subir la Jetson: i2cdetect -y -r 7 → 0x40 Y 0x41.
+- Software pendiente (Claude): (a) soporte multi-placa retrocompatible
+  (campo address default 0x40 en servo_map + router de backends + tests);
+  (b) integración INA3221 al nodo: rechazar armado bajo 15.2V.
+- Runbook restante: soldar → continuidad → "jetson arriba" (Claude
+  prepara remoto: pull+build+ensayo mock) → LiPo, brazos quietos, V+ al
+  final → ritual de armado de Andrés → soma_sign_check joint por joint
+  (anotar flips → Claude corrige ejes en xacro) → soma_primitives demo
+  FILMADA → tag v0.2 si todo canta.
