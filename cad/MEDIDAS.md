@@ -676,3 +676,33 @@ Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
   multi-placa. Pendiente en banco: ¿shunt CH1 en serie ya insertado?
   (confirmar), UBEC#2 a 6.00V sin carga, luego cadena LiPo → ritual de
   armado (Andrés) → sign_check → demo filmada → tag v0.2.
+
+### Cierre 11-ago (noche) y plan 12-ago — MONTAJE FÍSICO TOTAL
+
+- Sesión cerrada por fatiga (regla de siempre: soldador cansado =
+  defecto de seguridad). Shunt CH1 aún NO insertado; UBEC#2 aún sin
+  verificar 6.00V. La demo v0.2 queda para después del montaje.
+- DECISIÓN de Andrés: 12-ago = completar TODO el cobre de una vez
+  (hoja B del plano rev B), en este orden:
+  1. Comprar fusible 7.5-10A: es de CUCHILLA automotriz (ATO/ATC),
+     pedirlo así en repuestos de motos/carros.
+  2. Shunt CH1 en serie fusible→UBEC#1 (cables W15/W16 del plano).
+  3. Cadena DeWalt servos: adaptador B0B9NPZM3M + fusible nuevo + XT60
+     (WF01/WF02). Con fusible en mano la DeWalt puede debutar como
+     fuente de servos (el UBEC regula igual); todo encendido con
+     brazos compactos y apoyados, como siempre.
+  4. Cadena Jetson wireless: dock B0FP1B1F86 → barrel 5.5×2.5 centro+
+     → Jetson (WF03). OJO: sin power_guard de software todavía, pack
+     agotado = corte duro del UVLO a 15.2V. Aceptable para pruebas
+     cortas con pack lleno (20.2V = horas de margen); NO dejar la
+     Jetson desatendida a batería.
+  5. PREGUNTA DE DISEÑO para el banco: ¿el dock expone el voltaje del
+     PACK (20V) en algún punto medible con multímetro? Si sí → tap
+     solo-voltaje a INA CH3 (VIN3+ y VIN3− puenteados juntos al
+     positivo del pack: voltímetro sin shunt en serie, sin límite
+     térmico) y el power_guard lee CH3. Si no → pinza en terminales
+     pack↔dock o guard por tiempo. Se decide con el hardware en mano.
+- Software pendiente (Claude, mientras Andrés suelda): (a) multi-placa
+  retrocompatible (campo address en servo_map, default 0x40, PCA#2 =
+  0x43); (b) power_guard de la Jetson (diseño depende del punto 5);
+  (c) integración INA al nodo con piso por perfil de fuente.
