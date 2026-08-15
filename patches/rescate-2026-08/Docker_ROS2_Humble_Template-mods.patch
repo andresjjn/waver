@@ -1,0 +1,49 @@
+diff --git a/Dockerfile b/Dockerfile
+index 8bd5e42..7ba0dec 100644
+--- a/Dockerfile
++++ b/Dockerfile
+@@ -24,6 +24,11 @@ RUN sudo apt update && apt install -y \
+     python3-vcstool \
+     python3-colcon-common-extensions
+ 
++RUN apt update && apt install -y \
++    i2c-tools \
++    libi2c-dev \
++    build-essential
++
+ COPY ./autostart.sh /autostart.sh
+ RUN chmod +x /autostart.sh
+ 
+diff --git a/config_local.sh b/config_local.sh
+old mode 100755
+new mode 100644
+diff --git a/docker_scripts/bash b/docker_scripts/bash
+old mode 100755
+new mode 100644
+diff --git a/docker_scripts/build b/docker_scripts/build
+old mode 100755
+new mode 100644
+diff --git a/docker_scripts/clean_build.sh b/docker_scripts/clean_build.sh
+old mode 100755
+new mode 100644
+diff --git a/docker_scripts/run b/docker_scripts/run
+old mode 100755
+new mode 100644
+index 2218115..33dafd8
+--- a/docker_scripts/run
++++ b/docker_scripts/run
+@@ -10,5 +10,6 @@ docker run -it \
+   --name=${DOCKER_CONTAINER_NAME} \
+   --network ${ROS_NETWORK} \
+   --volume ${PROJECT_ROOT}/ros2_ws:/ros2_ws \
++  --device=/dev/i2c-1:/dev/i2c-1 \
+   --rm \
+   ${DOCKER_IMAGE_NAME} /autostart.sh /bin/bash
+diff --git a/ros2_ws/src/README.txt b/ros2_ws/src/README.txt
+deleted file mode 100644
+index 0e9eb68..0000000
+--- a/ros2_ws/src/README.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-# Put your ros2 packages in this folder
+\ No newline at end of file

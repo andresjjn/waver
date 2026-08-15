@@ -1,0 +1,17 @@
+diff --git a/config_docker.sh b/config_docker.sh
+index c6eb145..3a8bdd3 100644
+--- a/config_docker.sh
++++ b/config_docker.sh
+@@ -3,3 +3,4 @@
+ DOCKER_IMAGE_NAME="ros2_camera_image"
+ DOCKER_CONTAINER_NAME="ros2_camera_container"
+ ROS_NETWORK="host"
++DOCKER_REGISTRY_ADDR="MacBook-Pro-de-Andres.local:5005"
+diff --git a/ros2_ws/src/README.txt b/ros2_ws/src/README.txt
+deleted file mode 100644
+index 0e9eb68..0000000
+--- a/ros2_ws/src/README.txt
++++ /dev/null
+@@ -1 +0,0 @@
+-# Put your ros2 packages in this folder
+\ No newline at end of file
