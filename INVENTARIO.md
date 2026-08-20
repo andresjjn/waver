@@ -70,7 +70,7 @@ referencia/cantidad) · **DECIDIDO** (elegido en sesión, compra sin confirmar) 
 | Ítem | Ref/Detalle | Cant | Estado | Fuente |
 |---|---|---|---|---|
 | Extensiones servo Futaba/JR | 22AWG trenzadas 75-1000mm, item 1005007301246561, x10 | 10 | EN MANO | mem #1860 + arnés 10-ago |
-| PCA9685 16ch I2C | **comprados 2 por redundancia**; #1 en servicio (0x40); **#2 INSTALADO 11-ago en 0x43 (pares A0+A1)**, V+ propio, trae electrolítico a bordo, servos aún NO conmutados | **2** | EN MANO | mem #1850/#1899 + banco 11-ago |
+| PCA9685 16ch I2C | **comprados 2 por redundancia**; #1 = brazo DERECHO + L16 (0x40); **#2 = brazo IZQUIERDO desde 12-ago (0x43, pares A0+A1)**, ch 9-4 conservan su número, V+ propio, electrolítico a bordo | **2** | EN MANO | mem #1850/#1899 + banco 11/12-ago |
 | Tornillería ISO7380 inox 304 | surtido M2-M12 hex socket | kit | EN MANO? | mem #1899 |
 | Regleta pines hembra (header Jetson) | arnés definitivo I2C, soldada 10-ago | 1 | EN MANO | banco 10-ago |
 | Duponts / pines largos | para cortar-soldar-termoencoger | var | EN MANO | mem #1905 |

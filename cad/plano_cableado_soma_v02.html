@@ -79,7 +79,7 @@ code{font-family:var(--mono);font-size:.82em;background:var(--soft);padding:.08e
 <div class="tb">
   <div><span class="k">Proyecto</span><span class="v big">SOMA · banco bimanual</span></div>
   <div><span class="k">Documento</span><span class="v">Plano de cableado</span></div>
-  <div><span class="k">Rev / Fecha</span><span class="v">C · 2026-08-12</span></div>
+  <div><span class="k">Rev / Fecha</span><span class="v">D · 2026-08-12</span></div>
   <div><span class="k">Sesión</span><span class="v">v0.2 · dos placas + INA</span></div>
 </div>
 
@@ -109,7 +109,7 @@ code{font-family:var(--mono);font-size:.82em;background:var(--soft);padding:.08e
 
 <rect class="mod" x="270" y="60" width="230" height="240" rx="6"/>
 <text class="st" x="385" y="86" text-anchor="middle">PCA9685 #1</text>
-<text class="ss" x="385" y="103" text-anchor="middle">en servicio · 12 servos</text>
+<text class="ss" x="385" y="103" text-anchor="middle">brazo derecho + L16</text>
 <rect x="305" y="112" width="160" height="19" rx="9.5" fill="var(--exist-bg)"/>
 <text class="sw" x="385" y="125" text-anchor="middle" fill="var(--exist)">A0 abierto = 0x40</text>
 <rect class="pad" x="264" y="145" width="12" height="10"/><text class="sl" x="284" y="154">GND</text>
@@ -134,7 +134,7 @@ code{font-family:var(--mono);font-size:.82em;background:var(--soft);padding:.08e
 
 <rect class="mod" x="580" y="60" width="230" height="240" rx="6"/>
 <text class="st" x="695" y="86" text-anchor="middle">PCA9685 #2</text>
-<text class="ss" x="695" y="103" text-anchor="middle">V+ propio · sin servos hoy</text>
+<text class="ss" x="695" y="103" text-anchor="middle">brazo izquierdo · V+ propio</text>
 <rect x="605" y="112" width="180" height="19" rx="9.5" fill="var(--hoy-bg)"/>
 <text class="sw" x="695" y="125" text-anchor="middle" fill="var(--hoy)">A0+A1 CERRADOS = 0x43</text>
 <rect class="pad" x="574" y="145" width="12" height="10"/><text class="sl" x="594" y="154">GND</text>
@@ -185,7 +185,7 @@ code{font-family:var(--mono);font-size:.82em;background:var(--soft);padding:.08e
 <div class="sheet">
 <svg viewBox="0 0 1140 660" role="img" aria-label="Hoja B: esquema de potencia">
 <rect class="frame" x="4" y="4" width="1132" height="648" rx="4"/>
-<text class="sw" x="24" y="40" fill="var(--hoy)">RIEL 1 · SERVOS · HOY (fuente LiPo validada)</text>
+<text class="sw" x="24" y="40" fill="var(--hoy)">RIEL 1 · BRAZO DERECHO + L16 (0x40) · fuente por XT60: ATX en banco, LiPo/DeWalt en móvil</text>
 
 <rect class="mod" x="20" y="60" width="120" height="140" rx="6"/>
 <text class="st" x="80" y="84" text-anchor="middle">LiPo 2S</text>
@@ -246,14 +246,14 @@ code{font-family:var(--mono);font-size:.82em;background:var(--soft);padding:.08e
 <line x1="948" y1="126" x2="972" y2="126" stroke="var(--ink)" stroke-width="2"/>
 <line x1="948" y1="144" x2="972" y2="144" stroke="var(--ink)" stroke-width="2"/>
 <text class="sl" x="982" y="139">1000µF</text>
-<text class="sn" x="1005" y="188" text-anchor="middle">alimenta ch 15..4 · 12 servos</text>
+<text class="sn" x="1005" y="188" text-anchor="middle">alimenta brazo derecho ch 15-10 + L16</text>
 
 <path class="wk t3" d="M146 170 H158 V225 H688 V170 H694"/>
 <text class="sw" x="400" y="218" text-anchor="middle">W17 · retorno − (existente)</text>
 <text class="sn" x="570" y="252" text-anchor="middle">HOY se corta el positivo entre fusible y UBEC #1: el shunt CH1 queda EN SERIE (nacen W15 y W16)</text>
 <line x1="20" y1="270" x2="1120" y2="270" stroke="var(--soft)" stroke-width="1.5"/>
 
-<text class="sw" x="24" y="294" fill="var(--hoy)">RIEL 2 · SERVOS · HOY se deja listo (sin fuente todavía)</text>
+<text class="sw" x="24" y="294" fill="var(--hoy)">RIEL 2 · BRAZO IZQUIERDO (0x43) · activo desde el 12-ago vía rama B del Y</text>
 <g class="ghost">
 <rect class="mod dsh" x="20" y="310" width="260" height="126" rx="6" stroke-dasharray="6 5"/>
 <text class="sl" x="150" y="336" text-anchor="middle">FUTURO · fuente DeWalt</text>
@@ -301,7 +301,7 @@ code{font-family:var(--mono);font-size:.82em;background:var(--soft);padding:.08e
 <line x1="948" y1="374" x2="972" y2="374" stroke="var(--muted)" stroke-width="2"/>
 <line x1="948" y1="392" x2="972" y2="392" stroke="var(--muted)" stroke-width="2"/>
 <text class="sx" x="982" y="387">C4 ¿1000µF?</text>
-<text class="sn" x="1005" y="428" text-anchor="middle">sin servos hoy</text>
+<text class="sn" x="1005" y="428" text-anchor="middle">alimenta brazo izquierdo ch 9-4</text>
 <line x1="20" y1="456" x2="1120" y2="456" stroke="var(--soft)" stroke-width="1.5"/>
 
 <text class="sw" x="24" y="480" fill="var(--fut)">RIEL 3 · JETSON 12V · FUTURO (misión wireless)</text>
@@ -349,8 +349,8 @@ code{font-family:var(--mono);font-size:.82em;background:var(--soft);padding:.08e
 <text class="ss" x="405" y="182" text-anchor="middle">cuchilla ATO/ATC</text>
 <line class="wy t3" x1="480" y1="170" x2="540" y2="170"/><text class="sw" x="510" y="162" text-anchor="middle">WB02</text>
 <rect class="mod" x="540" y="135" width="200" height="70" rx="6"/>
-<text class="sl" x="640" y="162" text-anchor="middle">XT60 → UBEC #1 y #2</text>
-<text class="ss" x="640" y="182" text-anchor="middle">sigue la cadena de hoja B</text>
+<text class="sl" x="640" y="162" text-anchor="middle">XT60 macho · fuente universal</text>
+<text class="ss" x="640" y="182" text-anchor="middle">se enchufa donde iba la LiPo → Y</text>
 <line class="wy t3" x1="266" y1="230" x2="330" y2="230"/><text class="sw" x="298" y="222" text-anchor="middle">WB03</text>
 <rect class="mod" x="330" y="210" width="150" height="70" rx="6"/>
 <text class="sl" x="405" y="237" text-anchor="middle">barrel 5.5×2.5</text>
@@ -422,6 +422,8 @@ code{font-family:var(--mono);font-size:.82em;background:var(--soft);padding:.08e
 <tr><td class="id">C5</td><td class="term">INA3221 · CH2 y CH3</td><td>SIN conectar. Ver nota N4: el shunt de fábrica no aguanta el riel de 6V.</td><td><span class="tag hoy">HOY</span></td></tr>
 <tr><td class="id">C6</td><td class="term">UBEC#1 · jumper</td><td>Ya está en 6V, verificado en sesiones previas. No tocar.</td><td><span class="tag ex">EXISTENTE</span></td></tr>
 <tr><td class="id">C7</td><td class="term">ATX · conector 24 pines</td><td>Puente del cable VERDE (PS_ON) a cualquier NEGRO: la fuente enciende con el switch trasero. El MORADO (5VSB) queda vivo siempre, no usarlo. Primer encendido a solas, con multímetro.</td><td><span class="tag hoy">HOY · BANCO</span></td></tr>
+<tr><td class="id">C8</td><td class="term">Y de XT60 (fabricar)</td><td>1 macho (recibe la fuente) → 2 hembras (riel 1: árbol legacy con shunt CH1; riel 2: pigtail del UBEC #2). Soldado con el set XT60 14AWG del inventario.</td><td><span class="tag hoy">HOY · BANCO</span></td></tr>
+<tr><td class="id">C9</td><td class="term">Servos brazo izquierdo</td><td>Los 6 conectores pasan de la placa #1 a la #2 CONSERVANDO su número de canal (9-4). La #2 no tiene serigrafía: contar posiciones desde el extremo del canal 0 y verificar en el primer armado, canal por canal, como el 22-jul.</td><td><span class="tag hoy">HOY</span></td></tr>
 </tbody>
 </table>
 </section>
@@ -438,6 +440,7 @@ code{font-family:var(--mono);font-size:.82em;background:var(--soft);padding:.08e
 <div class="note"><b>N7 · Pull-ups en paralelo</b>PCA#1, PCA#2 e INA traen pull-ups propios de I2C. Tres módulos en un bus corto (&lt;30cm) a 3.3V dan una resistencia equivalente ~3.3kΩ: dentro de especificación. Nada que hacer, solo saberlo.</div>
 <div class="note alert"><b>N8 · Trampa de colores</b>En cables de servo, amarillo/naranja = señal. En el dock B0FP1B1F86 y en la ATX, AMARILLO = POSITIVO de 12V. Son mundos distintos: en potencia manda la serigrafía y el multímetro, nunca la costumbre.</div>
 <div class="note"><b>N9 · La etiqueta "500W" y el riel real</b>Los rieles de la ATX suman ~241W: manda el +12V de 10A. Presupuesto: Jetson ~2.5A + UBEC#1 ~3A + UBEC#2 ~3A ≈ 8.5A pico en el peor caso, dentro pero vigilado en vivo por soma/power. Misma lección que los "25 kg" del servo: la tabla es la verdad, el nombre es poesía.</div>
+<div class="note"><b>N10 · Fuente universal por XT60</b>La ATX termina en un XT60 macho y se enchufa EXACTAMENTE donde iba la LiPo, alimentando un Y hacia los dos rieles. Todo el árbol aguas abajo queda intacto (switch → fusible → shunt CH1 → UBECs), así el INA sigue viendo voltaje y corriente en cualquier modo, y cambiar banco↔móvil es cambiar UN conector.</div>
 </div>
 </section>
 
@@ -454,8 +457,10 @@ code{font-family:var(--mono);font-size:.82em;background:var(--soft);padding:.08e
 <li><input type="checkbox"><span class="vid">V8</span><span>Con la Jetson arriba: <code>i2cdetect -y -r 7</code> debe mostrar <code>0x40</code>, <code>0x41</code> y <code>0x43</code> — CUMPLIDO 11-ago.</span></li>
 <li><input type="checkbox"><span class="vid">V9</span><span>Firma del INA: <code>i2cget -y 7 0x41 0xfe w</code> debe responder <code>0x4954</code> ("TI" con los bytes volteados) — CUMPLIDO 11-ago, die ID 0x3220. Voltaje CH1 contra el multímetro cuando haya potencia.</span></li>
 <li><input type="checkbox"><span class="vid">V10</span><span>ATX a solas (puente verde-negro, nada más conectado): <strong>11.8-12.3V estables</strong> entre amarillo y negro; si baila, ventilador en un cable rojo/negro (5V) como carga mínima y re-medir.</span></li>
+<li><input type="checkbox"><span class="vid">V11</span><span>Con la ATX enchufada al árbol: <code>soma/power</code> (o lectura directa del INA CH1) debe mostrar <strong>~12V</strong> — prueba de que la fuente entró AGUAS ARRIBA del shunt y la telemetría ve todo.</span></li>
+<li><input type="checkbox"><span class="vid">V12</span><span>Primer armado post-conmutación: <code>soma_sign_check</code> del brazo IZQUIERDO canal por canal — si un conector quedó corrido en la placa #2, aquí se ve y se corrige moviendo el conector, no el código.</span></li>
 </ul>
 </section>
 
-<p class="foot">SOMA · plano_cableado_soma_v02.html · rev C · 2026-08-12 · direcciones verificadas en bus (0x40 · 0x41 · 0x43) · hoja C: modo banco ATX · dibujó Claudia · soldó y verificó Andrés · fuente en Waver/cad, versionado en git</p>
+<p class="foot">SOMA · plano_cableado_soma_v02.html · rev D · 2026-08-12 · dos rieles activos: brazo derecho 0x40, brazo izquierdo 0x43 · modo banco ATX vía XT60 universal · dibujó Claudia · soldó y verificó Andrés · fuente en Waver/cad, versionado en git</p>
 </div>

@@ -731,3 +731,24 @@ Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
     UBECs; molex → barrel 5.5×2.5 centro(+) → Jetson.
   · Primer encendido A SOLAS con multímetro: 11.8-12.3V estables antes
     de conectar nada. Plano rev C: hoja C nueva del modo banco.
+- CONMUTACIÓN DEL BRAZO IZQUIERDO: HOY (corrección de Andrés: "no
+  tiene sentido omitir algo que ya está instalado" — las dos placas
+  están soldadas, testeadas y con firma en el bus, y el software
+  multi-placa ya está en main). Plan ejecutado:
+  · servo_map: los 6 renglones del brazo izq ganan address=0x43,
+    MISMOS números de canal (9-4): el movimiento físico es 6 conectores
+    de la placa #1 a la #2, posición por posición. Pulsos y límites
+    intactos (pertenecen a los servos, no a la placa).
+  · Tests editados DECLARANDO el cambio de hecho (tabla exacta gana
+    columna de placa; el pin "todo en 0x40" muere como su propio
+    comentario exigía). Suite 151+1, CI VERDE (soma-arms d679c3f).
+  · La placa #2 no tiene serigrafía: primer armado re-confirma canal
+    por canal (sign_check del brazo izq), ritual del 22-jul.
+- FUENTE UNIVERSAL POR XT60 (decisión de diseño): la ATX termina en un
+  XT60 macho y se enchufa DONDE IBA LA LIPO, alimentando un Y de XT60
+  (fabricar hoy: 1 macho + 2 hembras) hacia ambos rieles. El árbol
+  aguas abajo queda intacto (switch → fusible → shunt CH1 → UBECs):
+  el INA ve todo en cualquier modo, y banco↔móvil = cambiar UN
+  conector. Plano rev D: dos rieles activos, C8 (Y de XT60), C9
+  (reconexión brazo izq), V11 (INA lee ~12V con ATX), V12 (sign_check
+  del izq post-conmutación).
