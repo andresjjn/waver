@@ -49,6 +49,7 @@ referencia/cantidad) · **DECIDIDO** (elegido en sesión, compra sin confirmar) 
 | Módulo ORing LM66200 (WeAct) | $7.098 COP, conmutación dual | 0 | EVALUADO, no comprado | ANDRÉS 10-ago |
 | Placa dual switching 15A UPS | $41.285 COP, alternativa al ORing | 0 | EVALUADO, no comprado | ANDRÉS 10-ago |
 | LiPo 2S + UBEC (banco original) | cadena de banco pre-DeWalt | 1 | EN MANO | banco |
+| **Fuente ATX MaxiTech 300U** | etiqueta "500W" pero rieles suman **~241W reales**; el que manda: **+12V @ 10A (120W)**; +5V 12A, +3.3V 13A; ATX12V v1.3 (vieja: puede pedir carga en 5V para regular); conectores 24pin + P4 + SATA/molex; **fuente de BANCO** (las DeWalt quedan para modo móvil) | 1 | EN MANO | ANDRÉS 12-ago |
 | XT60 macho/hembra c/ cable | 100mm 14AWG silicona, item 1005012281077296 | set | EN MANO | mem #1855 + banco |
 | Fusibles | repuestos ~30A (ubicación olvidada); el del kit B0B9NPZM3M probablemente 30A | var | EN MANO? | ANDRÉS 10-ago |
 | **Fusibles 7.5A-10A (COMPRAR)** | para la rama servos: 30A no protege un arnés de 14-16AWG | 0 | **PENDIENTE COMPRA** | análisis 10-ago |

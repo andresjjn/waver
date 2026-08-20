@@ -706,3 +706,28 @@ Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
   retrocompatible (campo address en servo_map, default 0x40, PCA#2 =
   0x43); (b) power_guard de la Jetson (diseño depende del punto 5);
   (c) integración INA al nodo con piso por perfil de fuente.
+
+## 2026-08-12 — Software del día + FUENTE ATX entra al banco
+
+- SOFTWARE CERRADO (CI verde en ambos commits):
+  · Multi-placa (soma-arms b51169e): ServoSpec.address default 0x40,
+    flota de backends ruteada por dirección, armado todo-o-nada, regla
+    de oro por placa; test pin "todo el mapa sigue en 0x40 hoy". La
+    conmutación del brazo izquierdo = 6 renglones + 6 conectores.
+  · Veto de batería (soma-arms 4f43627): parámetro battery_source
+    ('none' default / 'dewalt_5s' 15.2V / 'lipo_2s' 6.4V), publica
+    soma/power (BatteryState 1Hz, INA ch1), rechaza armar bajo el piso.
+    VETO, nunca compuerta; fail-safe si el INA no responde; SIN desarme
+    automático (cortar PWM en movimiento tira los brazos: la política
+    suave es del power_guard). Suite: 151 verdes + 1 skip rclpy.
+- FUENTE ATX MaxiTech 300U (decisión: fuente de BANCO; DeWalt = móvil):
+  · Etiqueta "500W" = marketing: rieles suman ~241W. Manda +12V@10A.
+  · Presupuesto 12V: Jetson ~2.5A + UBEC#1 ~3A + UBEC#2 ~3A ≈ 8.5A
+    pico peor caso (dentro, vigilado por soma/power). Hoy sin servos
+    en UBEC#2: ~5.5A pico, cómodo.
+  · Encendido standalone: puente VERDE(PS_ON)↔NEGRO en el 24 pines.
+    ATX12V v1.3: si el 12V baila sin carga, ventilador en 5V.
+  · Cosecha: P4 (2×amarillo+2×negro) → fusible 7.5-10A → XT60 →
+    UBECs; molex → barrel 5.5×2.5 centro(+) → Jetson.
+  · Primer encendido A SOLAS con multímetro: 11.8-12.3V estables antes
+    de conectar nada. Plano rev C: hoja C nueva del modo banco.

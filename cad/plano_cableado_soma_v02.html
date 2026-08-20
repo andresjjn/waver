@@ -79,7 +79,7 @@ code{font-family:var(--mono);font-size:.82em;background:var(--soft);padding:.08e
 <div class="tb">
   <div><span class="k">Proyecto</span><span class="v big">SOMA · banco bimanual</span></div>
   <div><span class="k">Documento</span><span class="v">Plano de cableado</span></div>
-  <div><span class="k">Rev / Fecha</span><span class="v">B · 2026-08-11</span></div>
+  <div><span class="k">Rev / Fecha</span><span class="v">C · 2026-08-12</span></div>
   <div><span class="k">Sesión</span><span class="v">v0.2 · dos placas + INA</span></div>
 </div>
 
@@ -330,7 +330,48 @@ code{font-family:var(--mono);font-size:.82em;background:var(--soft);padding:.08e
 </section>
 
 <section>
-<h2><span class="n">3</span>Wirelist — todos los cables</h2>
+<h2><span class="n">3</span>Hoja C — modo banco con fuente ATX (12-ago)</h2>
+<p class="sub">La ATX MaxiTech 300U alimenta TODO mientras se trabaja; las cadenas DeWalt de la hoja B pasan a ser el modo móvil. Etiqueta "500W", rieles reales ~241W: manda el +12V de 10A.</p>
+<div class="sheet">
+<svg viewBox="0 0 1140 340" role="img" aria-label="Hoja C: modo banco con fuente ATX">
+<rect class="frame" x="4" y="4" width="1132" height="332" rx="4"/>
+<rect class="mod" x="20" y="50" width="240" height="230" rx="6"/>
+<text class="st" x="140" y="76" text-anchor="middle">ATX MaxiTech 300U</text>
+<text class="ss" x="140" y="94" text-anchor="middle">etiqueta 500W · ~241W reales</text>
+<text class="ss" x="140" y="110" text-anchor="middle">+12V: 10A máx (120W)</text>
+<text class="sn" x="140" y="132" text-anchor="middle">VERDE↔NEGRO = encender</text>
+<text class="sn" x="140" y="150" text-anchor="middle">si el 12V baila: carga en 5V</text>
+<rect class="pad" x="254" y="165" width="12" height="10"/><text class="sl" x="248" y="174" text-anchor="end">P4</text>
+<rect class="pad" x="254" y="225" width="12" height="10"/><text class="sl" x="248" y="234" text-anchor="end">molex</text>
+<line class="wy t3" x1="266" y1="170" x2="330" y2="170"/><text class="sw" x="298" y="162" text-anchor="middle">WB01</text>
+<rect class="mod" x="330" y="135" width="150" height="70" rx="6"/>
+<text class="sl" x="405" y="162" text-anchor="middle">fusible 7.5-10A</text>
+<text class="ss" x="405" y="182" text-anchor="middle">cuchilla ATO/ATC</text>
+<line class="wy t3" x1="480" y1="170" x2="540" y2="170"/><text class="sw" x="510" y="162" text-anchor="middle">WB02</text>
+<rect class="mod" x="540" y="135" width="200" height="70" rx="6"/>
+<text class="sl" x="640" y="162" text-anchor="middle">XT60 → UBEC #1 y #2</text>
+<text class="ss" x="640" y="182" text-anchor="middle">sigue la cadena de hoja B</text>
+<line class="wy t3" x1="266" y1="230" x2="330" y2="230"/><text class="sw" x="298" y="222" text-anchor="middle">WB03</text>
+<rect class="mod" x="330" y="210" width="150" height="70" rx="6"/>
+<text class="sl" x="405" y="237" text-anchor="middle">barrel 5.5×2.5</text>
+<text class="ss" x="405" y="257" text-anchor="middle">centro positivo</text>
+<line class="wy t3" x1="480" y1="230" x2="540" y2="230"/><text class="sw" x="510" y="222" text-anchor="middle">WB04</text>
+<rect class="mod" x="540" y="210" width="200" height="70" rx="6"/>
+<text class="sl" x="640" y="237" text-anchor="middle">Jetson · jack DC</text>
+<text class="ss" x="640" y="257" text-anchor="middle">12V regulados directos</text>
+<rect class="mod" x="790" y="135" width="330" height="145" rx="6"/>
+<text class="sl" x="955" y="162" text-anchor="middle">presupuesto del riel 12V</text>
+<text class="ss" x="955" y="186" text-anchor="middle">Jetson ~2.5A · UBEC#1 ~3A · UBEC#2 ~3A</text>
+<text class="ss" x="955" y="206" text-anchor="middle">pico peor caso ~8.5A de 10A</text>
+<text class="ss" x="955" y="226" text-anchor="middle">hoy sin servos en #2: ~5.5A pico</text>
+<text class="sn" x="955" y="254" text-anchor="middle">vigilado en vivo por soma/power</text>
+<text class="sn" x="570" y="314" text-anchor="middle">amarillo = +12V · negro = GND (tierra común) · medir 11.8-12.3V estables ANTES de conectar nada</text>
+</svg>
+</div>
+</section>
+
+<section>
+<h2><span class="n">4</span>Wirelist — todos los cables</h2>
 <p class="sub">Un renglón por cable físico. Si no tienes hilo del color sugerido, usa el que haya, márcalo con cinta o termo y anota el color real en este plano.</p>
 <table>
 <thead><tr><th>ID</th><th>De</th><th>A</th><th>Señal</th><th>Color sugerido</th><th>AWG</th><th>Estado</th></tr></thead>
@@ -361,12 +402,16 @@ code{font-family:var(--mono);font-size:.82em;background:var(--soft);padding:.08e
 <tr><td class="id">WF01</td><td class="term">DeWalt DCB203</td><td class="term">adaptador B0B9NPZM3M</td><td>20V pack</td><td>del kit</td><td>12</td><td><span class="tag fut">FUTURO</span></td></tr>
 <tr><td class="id">WF02</td><td class="term">adaptador</td><td class="term">fusible 7.5–10A → XT60 macho</td><td>20V pack</td><td>rojo/negro</td><td>14–16</td><td><span class="tag fut">FUTURO · fusible por comprar</span></td></tr>
 <tr><td class="id">WF03</td><td class="term">dock B0FP1B1F86 salida</td><td class="term">barrel 5.5×2.5 → Jetson</td><td>12V</td><td><span class="dot" style="background:#E3A51C"></span>AMARILLO = +</td><td>del kit</td><td><span class="tag fut">FUTURO</span></td></tr>
+<tr><td class="id">WB01</td><td class="term">ATX conector P4 (2× amarillo)</td><td class="term">fusible 7.5-10A</td><td>+12V banco</td><td><span class="dot" style="background:#E3A51C"></span>amarillo ATX</td><td>18</td><td><span class="tag hoy">HOY · BANCO</span></td></tr>
+<tr><td class="id">WB02</td><td class="term">fusible</td><td class="term">XT60 macho → UBEC#1 y #2 IN+</td><td>+12V banco</td><td><span class="dot" style="background:#E3A51C"></span>amarillo</td><td>16-18</td><td><span class="tag hoy">HOY · BANCO</span></td></tr>
+<tr><td class="id">WB03</td><td class="term">ATX molex (amarillo + negro)</td><td class="term">barrel 5.5×2.5 centro(+) → Jetson</td><td>12V Jetson</td><td><span class="dot" style="background:#E3A51C"></span>amarillo ATX</td><td>18</td><td><span class="tag hoy">HOY · BANCO</span></td></tr>
+<tr><td class="id">WB04</td><td class="term">ATX negros (P4 y molex)</td><td class="term">retornos: UBEC IN− y barrel (−)</td><td>GND común</td><td><span class="dot" style="background:#3a3f45"></span>negro</td><td>18</td><td><span class="tag hoy">HOY · BANCO</span></td></tr>
 </tbody>
 </table>
 </section>
 
 <section>
-<h2><span class="n">4</span>Configuraciones que no son cables</h2>
+<h2><span class="n">5</span>Configuraciones que no son cables</h2>
 <table>
 <thead><tr><th>ID</th><th>Dónde</th><th>Qué hacer</th><th>Estado</th></tr></thead>
 <tbody>
@@ -376,12 +421,13 @@ code{font-family:var(--mono);font-size:.82em;background:var(--soft);padding:.08e
 <tr><td class="id">C4</td><td class="term">PCA#2 · borne verde</td><td>El clon del PCA#2 trae condensador electrolítico a bordo (visto 11-ago). El 1000µF extra se decide el día de la conmutación de servos.</td><td><span class="tag ex">APLAZADO</span></td></tr>
 <tr><td class="id">C5</td><td class="term">INA3221 · CH2 y CH3</td><td>SIN conectar. Ver nota N4: el shunt de fábrica no aguanta el riel de 6V.</td><td><span class="tag hoy">HOY</span></td></tr>
 <tr><td class="id">C6</td><td class="term">UBEC#1 · jumper</td><td>Ya está en 6V, verificado en sesiones previas. No tocar.</td><td><span class="tag ex">EXISTENTE</span></td></tr>
+<tr><td class="id">C7</td><td class="term">ATX · conector 24 pines</td><td>Puente del cable VERDE (PS_ON) a cualquier NEGRO: la fuente enciende con el switch trasero. El MORADO (5VSB) queda vivo siempre, no usarlo. Primer encendido a solas, con multímetro.</td><td><span class="tag hoy">HOY · BANCO</span></td></tr>
 </tbody>
 </table>
 </section>
 
 <section>
-<h2><span class="n">5</span>Notas de diseño — el porqué de cada decisión</h2>
+<h2><span class="n">6</span>Notas de diseño — el porqué de cada decisión</h2>
 <div class="notes">
 <div class="note alert"><b>N1 · V+ y OE vacíos en el daisy</b>El pin V+ del header lateral está unido internamente al borne verde. Si lo puenteas entre placas, unes los dos rieles de potencia y pierdes la separación que justifica el segundo UBEC. OE tiene pull-down interno: al aire, las salidas quedan habilitadas.</div>
 <div class="note"><b>N2 · El shunt va DESPUÉS del fusible</b>Orden: batería → switch → fusible → shunt CH1 → UBEC. Así el fusible protege también al shunt y su cableado. El INA mide el voltaje de bus en VIN1−, o sea exactamente lo que ve el UBEC: perfecto para el guard de batería.</div>
@@ -390,12 +436,13 @@ code{font-family:var(--mono);font-size:.82em;background:var(--soft);padding:.08e
 <div class="note"><b>N5 · El piso de 15.2V es del pack DeWalt</b>battery_ok() usa 15.2V porque es el corte del dock (5S). Con la LiPo 2S del banco leerías ~8V y el guard rechazaría todo: la integración al nodo llevará el piso por perfil de fuente. Hoy el INA solo se instala y se lee, no gobierna el armado.</div>
 <div class="note"><b>N6 · Retornos de corriente</b>El GND fino del daisy es SOLO referencia de señal. La corriente de los servos de cada riel entra y sale por su propio par al borne verde. Nunca uses el daisy como retorno de potencia.</div>
 <div class="note"><b>N7 · Pull-ups en paralelo</b>PCA#1, PCA#2 e INA traen pull-ups propios de I2C. Tres módulos en un bus corto (&lt;30cm) a 3.3V dan una resistencia equivalente ~3.3kΩ: dentro de especificación. Nada que hacer, solo saberlo.</div>
-<div class="note alert"><b>N8 · Trampa de colores</b>En cables de servo, amarillo/naranja = señal. En el dock B0FP1B1F86, AMARILLO = POSITIVO de 12V. Son mundos distintos: en potencia manda la serigrafía y el multímetro, nunca la costumbre.</div>
+<div class="note alert"><b>N8 · Trampa de colores</b>En cables de servo, amarillo/naranja = señal. En el dock B0FP1B1F86 y en la ATX, AMARILLO = POSITIVO de 12V. Son mundos distintos: en potencia manda la serigrafía y el multímetro, nunca la costumbre.</div>
+<div class="note"><b>N9 · La etiqueta "500W" y el riel real</b>Los rieles de la ATX suman ~241W: manda el +12V de 10A. Presupuesto: Jetson ~2.5A + UBEC#1 ~3A + UBEC#2 ~3A ≈ 8.5A pico en el peor caso, dentro pero vigilado en vivo por soma/power. Misma lección que los "25 kg" del servo: la tabla es la verdad, el nombre es poesía.</div>
 </div>
 </section>
 
 <section>
-<h2><span class="n">6</span>Verificación — antes de dar candela</h2>
+<h2><span class="n">7</span>Verificación — antes de dar candela</h2>
 <ul class="check">
 <li><input type="checkbox"><span class="vid">V1</span><span>Continuidad de los 4 hilos del tramo PCA#1 → PCA#2, terminal por terminal, POR NOMBRE.</span></li>
 <li><input type="checkbox"><span class="vid">V2</span><span>Continuidad de los 4 hilos del tramo PCA#2 → INA3221.</span></li>
@@ -406,8 +453,9 @@ code{font-family:var(--mono);font-size:.82em;background:var(--soft);padding:.08e
 <li><input type="checkbox"><span class="vid">V7</span><span>Brazos compactos y apoyados en el banco ANTES de energizar cualquier V+ (regla inviolable 4).</span></li>
 <li><input type="checkbox"><span class="vid">V8</span><span>Con la Jetson arriba: <code>i2cdetect -y -r 7</code> debe mostrar <code>0x40</code>, <code>0x41</code> y <code>0x43</code> — CUMPLIDO 11-ago.</span></li>
 <li><input type="checkbox"><span class="vid">V9</span><span>Firma del INA: <code>i2cget -y 7 0x41 0xfe w</code> debe responder <code>0x4954</code> ("TI" con los bytes volteados) — CUMPLIDO 11-ago, die ID 0x3220. Voltaje CH1 contra el multímetro cuando haya potencia.</span></li>
+<li><input type="checkbox"><span class="vid">V10</span><span>ATX a solas (puente verde-negro, nada más conectado): <strong>11.8-12.3V estables</strong> entre amarillo y negro; si baila, ventilador en un cable rojo/negro (5V) como carga mínima y re-medir.</span></li>
 </ul>
 </section>
 
-<p class="foot">SOMA · plano_cableado_soma_v02.html · rev B · 2026-08-11 · direcciones verificadas en el bus (0x40 · 0x41 · 0x43) · dibujó Claudia · soldó y verificó Andrés · fuente en Waver/cad, versionado en git</p>
+<p class="foot">SOMA · plano_cableado_soma_v02.html · rev C · 2026-08-12 · direcciones verificadas en bus (0x40 · 0x41 · 0x43) · hoja C: modo banco ATX · dibujó Claudia · soldó y verificó Andrés · fuente en Waver/cad, versionado en git</p>
 </div>
