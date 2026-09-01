@@ -785,5 +785,21 @@ Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
 - Limpieza de circuitos: WD-40 clásico VETADO en electrónica (residuo
   aceitoso que atrapa polvo y arruina resoldaduras). Estándar: alcohol
   isopropílico ≥90% + brocha suave + aire, todo desenergizado y seco
-  antes de dar candela. La ATX NUNCA se abre (condensadores cargados):
-  polvo por las rejillas con aire, nada más.
+  antes de dar candela. (Andrés, técnico en electrónica, limpió la ATX
+  por dentro con criterio propio: ventilador y polvo, primario intacto.)
+- MONTAJE COMPLETADO 01-sep: molex→barrel (centro+ verificado contra
+  spec NVIDIA: 5.5×2.5, centro positivo, 9-19V), P4 completo → fusible
+  10A → XT60 hembra → Y → ambos UBEC (distribución en estrella,
+  retornos separados). Jetson corrió DE LA ATX por primera vez. Jetson
+  reubicada por DHCP: ahora jetson.local (192.168.1.11; la .13 se la
+  quedó un celular). Repo en Jetson actualizado a main (aeff395);
+  usuario jetson SIN grupo docker (pendiente usermod de Andrés).
+- ⚡ INCIDENTE 01-sep: al conectar la potencia de servos EN CALIENTE,
+  el inrush (caps de entrada de ambos UBEC + 12 servos) disparó la
+  protección/hundió el riel 12V de la ATX y APAGÓ la Jetson (corte
+  duro). Física: la fuente es el nodo raíz común; la estrella no
+  protege del colapso del raíz. Decisión pendiente de Andrés:
+  (A) Jetson a su adaptador de pared 19V y ATX dedicada a servos
+  (dominios separados de verdad, voto de Claudia), o
+  (B) todo-ATX con secuencia estricta: todo conectado ANTES de
+  encender la fuente (el soft-start de la ATX limita el inrush).
