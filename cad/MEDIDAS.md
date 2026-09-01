@@ -778,3 +778,12 @@ Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
 - Correo de OmniLink (31-ago) analizado: outreach real no-phishing de
   un simulador open-source; valor técnico ~0 para SOMA (tenemos
   MuJoCo+oráculo propios), decisión de marca pendiente de Andrés.
+- V10 CUMPLIDO: ATX a solas con puente verde-negro = 11.6V ESTABLES.
+  Bajo el deseable (11.8-12.3) pero dentro del ±5% del estándar ATX
+  (11.4-12.6); Jetson (9-20V) y UBECs lo aceptan de sobra. Vigilar
+  bajo carga: si cae de 11.4V sostenido → ventilador de carga en 5V.
+- Limpieza de circuitos: WD-40 clásico VETADO en electrónica (residuo
+  aceitoso que atrapa polvo y arruina resoldaduras). Estándar: alcohol
+  isopropílico ≥90% + brocha suave + aire, todo desenergizado y seco
+  antes de dar candela. La ATX NUNCA se abre (condensadores cargados):
+  polvo por las rejillas con aire, nada más.
