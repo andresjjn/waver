@@ -803,3 +803,14 @@ Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
   (dominios separados de verdad, voto de Claudia), o
   (B) todo-ATX con secuencia estricta: todo conectado ANTES de
   encender la fuente (el soft-start de la ATX limita el inrush).
+
+### Pausa 01-sep (noche): fijación mecánica antes de mover
+- Driver VIVO en la Jetson: contenedor soma_driver con main completo,
+  "MOCK backend, DISARMED" en logs. Docker OK (usermod hecho).
+- 6.00V confirmados en AMBOS bornes. Jetson en su adaptador propio
+  (decisión A). Ritual de 3 pasos entregado a Andrés (A: relanzar con
+  allow_real; B: /soma/arm — suyo; C: soma_sign_check interactivo).
+- PENDIENTE ANTES DE MOVER: C9 (¿6 conectores del brazo izq en placa
+  #2? sin confirmar) + FIJACIÓN MECÁNICA en curso: Andrés fija placas/
+  UBECs/cables (estaban al aire: riesgo real de corto o tirón al
+  mover). Decisión correcta, regla 5 en acción.
