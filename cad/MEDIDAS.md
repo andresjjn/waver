@@ -752,3 +752,29 @@ Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
   conector. Plano rev D: dos rieles activos, C8 (Y de XT60), C9
   (reconexión brazo izq), V11 (INA lee ~12V con ATX), V12 (sign_check
   del izq post-conmutación).
+
+
+## 2026-09-01 — Reanudación tras 3 semanas (estado real del banco)
+
+- Reporte de Andrés: fusible 10A COMPRADO E INSTALADO ✓; ATX en curso
+  de preparación; PENDIENTES: reconexión brazo izq a placa #2 (C9),
+  Y de XT60 (C8), shunt CH1 (W15/W16), molex→barrel Jetson (WB03).
+- ⚠ DESAJUSTE CONSCIENTE mapa/banco: main (soma-arms d679c3f) ya
+  mapea el brazo izquierdo en 0x43, pero sus 6 servos siguen
+  físicamente en la placa #1 (0x40). Desarmado es inofensivo (el
+  brazo izq quedaría sin señal, flácido, jamás errático). PROHIBIDO
+  ARMAR hasta completar C9: la reconexión va ANTES del ritual en la
+  secuencia de esta sesión. El mapa describe el banco OBJETIVO de hoy.
+- Secuencia de reanudación: (1) ATX terminada + V10 (11.8-12.3V a
+  solas); (2) Y de XT60 + molex→barrel; (3) C9 reconexión 6 servos
+  posición por posición; (4) shunt CH1 si hay gasolina (recomendado,
+  no bloqueante: la demo sale sin él); (5) Jetson arriba → escaneo →
+  ritual de armado de Andrés → sign_check AMBOS brazos → demo
+  bimanual FILMADA → tag v0.2.
+- Pregunta abierta: ¿el fusible 10A quedó en la rama ATX (antes del
+  XT60 universal, posición WB01: perfecto) o en la cadena del
+  adaptador DeWalt (WF02: entonces la rama ATX necesita el suyo o
+  moverlo)? El 12V de la ATX no viaja sin fusible.
+- Correo de OmniLink (31-ago) analizado: outreach real no-phishing de
+  un simulador open-source; valor técnico ~0 para SOMA (tenemos
+  MuJoCo+oráculo propios), decisión de marca pendiente de Andrés.
