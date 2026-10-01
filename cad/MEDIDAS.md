@@ -814,3 +814,21 @@ Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
   #2? sin confirmar) + FIJACIÓN MECÁNICA en curso: Andrés fija placas/
   UBECs/cables (estaban al aire: riesgo real de corto o tirón al
   mover). Decisión correcta, regla 5 en acción.
+
+## 2026-10-01 — Red de la Jetson curada + OAK-D Lite verificada en USB-C
+- Lentitud de SSH/xrdp: NO era alimentación (VDD_IN 4.7 W, 0 alarmas
+  del INA3221 interno, 49 °C, CPU 96-100% idle, 0 iowait). Causa: WiFi
+  power save ON (ping 37 ms prom / 99 ms máx, pérdidas intermitentes).
+  Fix: sudoers acotado /etc/sudoers.d/soma-claude (NOPASSWD solo
+  nmcli, iw, nvpmodel, jetson_clocks, shutdown) + perfil JEJEN_5G
+  powersave=disable + iw power_save off → 1.5 ms prom, 3.4 máx, 0%
+  pérdida. Login SSH 0.45 s. xrdp sigue pesado por diseño (Xorg :10
+  por software, max_bpp=32, crypt high): bajar a 16 bits en cliente.
+- Jetson ahora en 192.168.1.2 por WiFi (wlP1p1s0); Ethernet sin cable.
+  Pendiente: reserva DHCP de la MAC f0:68:e3:32:b6:8f en el router.
+- MAXN_SUPER activo; jetson_clocks NO aplicado a propósito (sin carga
+  que lo justifique hasta v0.3/RL).
+- OAK-D Lite (MxId 19443010A1A8DE5900) por el USB-C de la Jetson
+  (modo host, USB 3.2 Gen2) con cable 40 Gbps: USB SUPER (5 Gbps),
+  IMX214 + 2× OV7251, RGB 640×400 a 29.7 fps, chip 33 °C. depthai
+  2.32 en Python del sistema + regla udev 80-movidius ya instaladas.
