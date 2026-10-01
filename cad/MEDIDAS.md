@@ -832,3 +832,9 @@ Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
   (modo host, USB 3.2 Gen2) con cable 40 Gbps: USB SUPER (5 Gbps),
   IMX214 + 2× OV7251, RGB 640×400 a 29.7 fps, chip 33 °C. depthai
   2.32 en Python del sistema + regla udev 80-movidius ya instaladas.
+- OAK-D Lite PROFUNDIDAD verificada: baseline 7.5 cm (calib. fábrica),
+  depth 640x480 @ 30.0 fps (480P, LR-check + subpixel), centro a
+  196 cm con ruido temporal 0.93 cm, escena 36 cm-12.5 m, 37% píxeles
+  válidos (pared lisa). Regla de montaje: mínimo ~35 cm entre la OAK y
+  el espacio de trabajo de las pinzas (alcance 355 mm): arriba, mirando
+  hacia abajo en ángulo. Cámara LISTA para v0.3 (eye-hand).
