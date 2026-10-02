@@ -866,3 +866,12 @@ Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
   primitivas con hombros fuera de la vertical, dimensionada con el dato
   "µs desde el cero donde deja de oscilar" (pendiente de medir). Servo
   digital/inteligente para hombros solo si (1) no alcanza.
+- DIRECCIÓN VERIFICADA POR ANDRÉS (01-oct, en su sesión de captura): en la
+  base (yaw/J1), HACIA ADELANTE = MIN y HACIA ATRÁS = MAX. Como cada MIN
+  quedó del lado negativo (abrazo) en la recalibración (soma-arms
+  2bc3883), confirma en el metal: yaw negativo = adelante, lejos de la
+  columna/Jetson. Si la regla vale para hombro/codo/muñeca pitch (por
+  confirmar), el recorrido grande del hombro (+134°) es HACIA ATRÁS:
+  el hombro no sirve para levantar el brazo al frente (solo ~25°).
+- Prioridad de Andrés: ROS primero; el saludo corre por el driver
+  (soma_primitives wave), el workbench queda como herramienta de banco.
