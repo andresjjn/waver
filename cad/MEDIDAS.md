@@ -852,3 +852,17 @@ Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
 - Workbench renovado hoy: lee SERVO_MAP (ambas placas), sliders desde
   el cero calibrado, ALL OFF tolerante a placa ausente, modo --raw.
 - INA3221 retirado del bus por Andrés (sin carga que medir aún).
+- OSCILACIÓN DE HOMBROS (01-oct, diagnosticada): con el brazo colgando
+  en la vertical (cero), los hombros oscilan adelante-atrás sin parar;
+  se detiene al comandar otra pose o con un roce mínimo de un dedo.
+  Diagnóstico: ciclo límite por backlash + zona muerta del MG996R
+  analógico en la zona de torque gravitacional ~0 (sin precarga, el
+  juego de engranajes queda libre dentro de un lazo P con poca
+  amortiguación y la mayor inercia del brazo). Confirmado por Andrés:
+  una fuerza que precarga lo estabiliza → servo sano, no es potencia.
+  Plan: (1) precarga mecánica suave (banda/resorte, una sola dirección
+  en todo el recorrido del hombro, solo lo que venza el backlash: cada
+  gramo resta payload); (2) software complementario: pose de reposo de
+  primitivas con hombros fuera de la vertical, dimensionada con el dato
+  "µs desde el cero donde deja de oscilar" (pendiente de medir). Servo
+  digital/inteligente para hombros solo si (1) no alcanza.
