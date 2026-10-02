@@ -838,3 +838,17 @@ Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
   válidos (pared lisa). Regla de montaje: mínimo ~35 cm entre la OAK y
   el espacio de trabajo de las pinzas (alcance 355 mm): arriba, mirando
   hacia abajo en ángulo. Cámara LISTA para v0.3 (eye-hand).
+- ⚠ LECCIÓN DEL DÍA (01-oct): el arnés se reportó como "canales 1 a 12"
+  y el mapa lo siguió (soma-arms 6610d13). Resultado: brazo derecho
+  muerto y el izquierdo recibiendo pulsos de articulaciones vecinas (la
+  "pinza cerrada" la abría). Diagnóstico por descarte, todo bien medido:
+  registros correctos, MODE2 idéntico, OE en 0V, +6V en el riel con
+  polaridad correcta, PWM en el header, otra fuente, mismo resultado. La
+  causa: las placas NO tienen serigrafía de canales y el header se contó
+  desde la punta equivocada. Un servo de repuesto canal por canal
+  (workbench --raw) probó la verdad: el layout de agosto, 15-10 en 0x40
+  y 9-4 en 0x43. Mapa restaurado. Regla nueva en CLAUDE.md/wiring.md:
+  un número de canal se PRUEBA moviendo un servo, nunca contando pines.
+- Workbench renovado hoy: lee SERVO_MAP (ambas placas), sliders desde
+  el cero calibrado, ALL OFF tolerante a placa ausente, modo --raw.
+- INA3221 retirado del bus por Andrés (sin carga que medir aún).
