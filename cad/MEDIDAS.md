@@ -875,3 +875,113 @@ Creado `ROS2_Docker_twin/ros2_ws/src/waver_arm_description`:
   el hombro no sirve para levantar el brazo al frente (solo ~25°).
 - Prioridad de Andrés: ROS primero; el saludo corre por el driver
   (soma_primitives wave), el workbench queda como herramienta de banco.
+
+## 2026-10-03 — Plan de SOMA reestructurado: escalera por objetivos hacia una celda de tending
+
+- Estado real al retomar: v0.1 sigue siendo el único tag de soma-arms. Los 12
+  MG996R responden desde el workbench servo a servo, pero NADA se ha movido
+  por el driver ROS: signos de hombro/codo/muñeca sin verificar (solo el yaw:
+  adelante = MIN = negativo), sin saludo, sin precarga de hombros. Cámara
+  conectada y verificada, sin montar en posición fija.
+- Decisiones de Andrés (sesión en la nube): los brazos siguen COLGANDO como
+  están; no hay objetos todavía (se compran/fabrican; en el pueblo hay
+  cortadora láser de madera); la pinza es tipo tijera (abre 180°); activará
+  billing + crédito de Google para la API; planificación POR OBJETIVOS, nunca
+  por fechas; meta = una jornada corrida de 6-7 h haciendo el trabajo de un
+  operario; el learning track (RL/MuJoCo/MJX) se ELIMINA del plan; el saludo
+  (wave) va primero; el plan vive en soma-arms/docs/plan.md (inglés).
+- GEOMETRÍA QUE MANDA (del modelo medido, soma-arms scripts/workspace_map.py):
+  cada brazo es una cadena plana (yaw, hombro, codo, muñeca pitch con ejes
+  paralelos horizontales) y el centro de la pinza (tool0, sobre el eje de
+  roll) NUNCA sale de su plano. Los planos están a ±62.3 mm del centro
+  (mount_ly/2 + disc_h) = 124.6 mm entre sí. Consecuencias: cada brazo
+  trabaja un CARRIL; no hay handoff bimanual posible; no hay clasificación
+  entre carriles. Alcance con pinza vertical (hipótesis de signos del URDF,
+  positivo = atrás en los 4 ejes; 0.1 rad dentro de cada límite): punta a
+  20 mm sobre la placa → x ∈ [-69, +71] mm (der.), [-66, +71] (izq.); a
+  60 mm → [-122, +120] / [-119, +131]; a 80 mm se abre un hueco bajo el eje
+  y el frente del derecho se cierra (su muñeca pitch solo inclina 22°
+  adelante, +0.4869 rad medido; la izquierda 74°). Con 15° de inclinación de
+  herramienta permitida, a 60 mm: [-156, +164] / [-153, +165]. NO es monótono
+  con la altura. Decisión: cubierta (deck) a 40 mm sobre la placa, pockets a
+  ~-70/0/+70 mm por carril (46 mm para piezas de 40 mm, paso 70), inclinación
+  hasta 15° en los picks. La placa termina 55 mm delante del eje
+  (plate_x_back, estimado): el deck sobresale hacia delante y se apoya en la
+  mesa alrededor de la placa. Pocket trasero junto a la columna: carril a
+  62.3, columna a ±30, pinza de 45 mm → ~10 mm de holgura; primero maqueta en
+  cartón. Dibujo: soma-arms docs/workspace_map.svg (mm, para la láser).
+- DECISIÓN DEL CONSEJO (v1.0): celda de atención de dos estaciones ("tending
+  cell"): cada brazo atiende su carril con 3 pockets (ENTRADA, MÁQUINA con
+  lámpara en un canal libre 0-2 de la PCA 0x40, SALIDA). Ciclo: el supervisor
+  (Gemini ER 2) señala la pieza, el brazo la carga en MÁQUINA, lámpara, la
+  descarga en SALIDA, el supervisor verifica el estado final y lee el ID
+  grabado; el contador sube solo con ciclo verificado. ENTRADA vacía → los
+  roles se invierten y las piezas vuelven: corre horas sin humano. Brazos
+  intercalados (nunca los dos acelerando a la vez). Piezas: bloques de madera
+  ~40 mm, <50 g, con ID grabado. Sin banda, sin mesa giratoria (diferida a
+  post-1.0), sin bimanual (física, no prioridad). Razón: es la única tarea que
+  respeta la física (carril 1D, par real ~10 kg·cm, sin corrección lateral),
+  sin mecanismo que falle en 7 h, se reinicia sola, y le da a la nube un
+  trabajo visible sin meterla en la ruta de seguridad. Mayor riesgo: la
+  resistencia térmica/mecánica de los MG996R en 7 h (pinza en stall, ciclo
+  límite, base cerca del par máximo) → agarre al contacto con almohadillas,
+  precarga, pose de reposo fuera de la vertical, estaciones cerca de la
+  vertical y UNA HORA de soak con temperaturas medidas como compuerta antes
+  de intentar las 7 h.
+- Escalera nueva (compuertas, sin fechas): v0.2 driver real (sign check de
+  los 12 ejes por ROS + `soma_primitives wave`, filmado, precarga de hombros)
+  → v0.3 geometría de celda y calibración ojo-deck (deck láser con los signos
+  verificados, OAK fija en la columna a ≥35 cm del deck, homografía
+  píxel→deck, IK plana analítica promovida al driver; aceptación: clic en un
+  pocket y la pinza toca su centro a <5 mm, 10/10, también tras apagar y
+  encender) → v0.4 ciclo programado sin nube (30 ciclos seguidos por brazo
+  sin caída + soak de 1 h con temperaturas) → v0.5 soma_agent (ER 2:
+  pointing, verificación, lectura de ID, function calling limitado a
+  primitivas con test de que el esquema no puede armar/ampliar
+  límites/saltar la rampa, fallback sin API, log de costo/latencia; 50
+  ciclos verificados con 1 fallo inducido recuperado) → v1.0 el operario
+  (6-7 h corridas, dos brazos, contador verificado, video sin cortes).
+  Fuera: learning track (export_mjcf.py borrado; el oráculo MuJoCo queda
+  como chequeo de unidades), MoveIt como IK (SRDF y kinematics.yaml quedan
+  como referencia), handoff bimanual, BlazePose (post-1.0).
+- GEMINI, verificado con fuentes (03-oct): "Gemini Robotics 2" (acciones) y
+  "On-Device 2" son solo para partners/trusted testers. Lo único invocable
+  es `gemini-robotics-er-2-preview` (puntos 2D [y,x] 0-1000, cajas,
+  trayectorias, planificación con function calling, verificación de
+  progreso/éxito en video; salida 2D, el XYZ lo pone la OAK). Precio
+  $1/$5 por millón de tokens hasta el 31-dic-2026, el doble desde el
+  1-ene-2027; ER 1.5 y 1.6 ya apagados (ID configurable, nunca en código).
+  La suscripción AI Pro NO da acceso a la API; incluye $10/mes de crédito
+  Cloud (Developer Program premium) que hay que activar en un proyecto con
+  billing; free tier reportado ~20 req/día (no oficial). Latencia reportada
+  por la comunidad ~2.6 s por llamada. Key SOLO por variable de entorno
+  (GEMINI_API_KEY), jamás en el repo. Términos: "no safety-critical", bajo
+  riesgo propio: coherente con "la nube propone, el driver armado dispone".
+- Código que salió de la sesión (rama plan-2026-10-03-tending-cell de
+  soma-arms, 5 commits, suite 253 en verde + 7 skips sin ROS/mujoco):
+  (1) `wave`: poses wave_probe/raise_1/raise_2/open/close y la secuencia
+  (14 pasos, 17.5 s): sonda yaw -0.25 (debe ir ADELANTE), subida con el yaw
+  a -0.87 y codo -0.90 → -1.83 (dos pasos por el tope de 1 rad/paso), tres
+  oscilaciones del codo entre -1.57 (pinza abierta) y -2.09 (cerrada),
+  bajada por el mismo camino; ≥0.3 rad a todo límite; el signo del codo NO
+  está verificado (si está al revés no choca nada, pero el primer paso de
+  codo es la sonda real). (2) `soma_primitives wave --step`: un paso por
+  ENTER; `q` NO salta a home, deshace el camino andado paso a paso (player.py
+  puro y testeado). (3) scripts/workspace_map.py (FK/IK plana, tabla de
+  alcance, SVG, `--flip <eje>` para rehacerlo con los signos reales).
+  (4) scripts/er2_probe.py (una imagen → puntos, latencia y tokens).
+  (5) docs/plan.md, README y CLAUDE.md reescritos a la escalera nueva.
+- ESTA SESIÓN NO PUDO HACER PUSH A soma-arms (403: la app de GitHub de
+  Claude no está instalada en ese repo). Entrega: bundle + parches
+  (soma-arms-2026-10-03/*.patch y plan-2026-10-03-tending-cell.bundle).
+  Aplicar en el Mac: `git fetch <ruta>.bundle plan-2026-10-03-tending-cell
+  && git merge --ff-only FETCH_HEAD` desde main; o `git am *.patch`. Para la
+  próxima vez: instalar la app en soma-arms
+  (github.com/apps/claude/installations/select_target).
+- Próximos pasos en el banco, en orden: ritual (allow_real:=true, /soma/arm)
+  + soma_sign_check del brazo derecho → `soma_primitives wave --step`, luego
+  sin --step, filmado → medir µs desde el cero donde el hombro deja de
+  oscilar y precargar → rehacer el mapa con los signos reales (--flip) y
+  maqueta en cartón del deck antes de la láser → comprar 6 bloques de madera
+  ~40 mm y una lámpara → key de AI Studio + billing + crédito y
+  er2_probe.py desde la Jetson con un frame de la OAK.
